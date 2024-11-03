@@ -1,0 +1,75 @@
+.home-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.welcome-message {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
+    animation: fadeIn 0.8s ease-in;
+}
+
+.home-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    animation: fadeIn 1s ease-in;
+}
+/* Ajoutez ceci à src/styles/home.css */
+
+.logout-wrapper {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.logout-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}
+
+.logout-button:active {
+    transform: scale(0.98);
+}
+
+/* Modification du container pour gérer le positionnement absolu */
+.home-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-message {
+        font-size: 2rem;
+    }
+
+    .home-subtitle {
+        font-size: 1rem;
+    }
+}

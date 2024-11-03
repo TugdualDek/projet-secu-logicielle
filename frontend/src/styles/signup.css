@@ -1,0 +1,44 @@
+/* Styles spécifiques à la page d'inscription */
+.signup-container {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.signup-container h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 24px;
+}
+
+.signup-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.signup-button:hover {
+    background-color: #218838;
+}
+
+.signup-links {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.signup-links a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.signup-links a:hover {
+    text-decoration: underline;
+}
