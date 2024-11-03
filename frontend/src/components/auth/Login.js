@@ -23,16 +23,13 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await api.post('/login', formData);
-            console.log('connexion réussie:', response.data );
-
-            // Sauvegarder les informations de l'utilisateur
+            const response = await api.post('/auth/login', formData);
+            console.log('connexion réussie:', response.data);
             sessionStorage.setItem('user', JSON.stringify(response.data.user));
-            navigate('/home');
-
+            navigate('/dashboard');
         } catch (err) {
             console.error('Erreur lors de la connexion:', err);
-            setError(err.response?.data?.error || 'Email ou mdp incorrect');
+            setError(err.response?.data?.error || 'Email ou mot de passe incorrect');
         }
     };
     return (

@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Signup from './components/auth/Signup';
 import Login from './components/auth/Login';
 import Home from './components/pages/Home';
+import Dashboard from './components/pages/Dashboard';
 
 function App() {
     return (
@@ -13,7 +14,7 @@ function App() {
                 <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/home" element={<Home />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </Router>

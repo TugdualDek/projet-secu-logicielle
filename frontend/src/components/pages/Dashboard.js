@@ -28,6 +28,9 @@ function Dashboard() {
             navigate('/login');
         } catch (error) {
             console.error('Logout failed:', error);
+            // Même en cas d'erreur, on déconnecte l'utilisateur localement
+            sessionStorage.removeItem('user');
+            navigate('/login');
         }
     };
 

@@ -24,13 +24,12 @@ function Signup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await api.post('/signup', formData);
+            const response = await api.post('/auth/signup', formData);
             console.log('Inscription réussie:', response.data);
-            // Sauvegarder les informations de l'utilisateur
-            sessionStorage.setItem('user', JSON.stringify(response.data));
-            navigate('/home');
+            sessionStorage.setItem('user', JSON.stringify(response.data.user));
+            navigate('/dashboard');
         } catch (err) {
-            console.error('Erreur lors de l\'inscription:', err);
+            console.error('Erreur lors de linscription:', err);
             setError(err.response?.data?.error || 'Une erreur est survenue lors de l\'inscription');
         }
     };
