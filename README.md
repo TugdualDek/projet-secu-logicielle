@@ -1,6 +1,6 @@
 # FortiCheck
 
-Application de test de sécurité web avec interface graphique.
+Application de test de sécurité web avec interface graphique nommé pour l'instant FortiCheck :)
 
 ## Prérequis
 
@@ -17,7 +17,7 @@ Application de test de sécurité web avec interface graphique.
 git clone <votre-repo-url>
 cd FortiCheck
 
-# Créer et activer un environnement virtuel
+# Créer et activer un environnement virtuel ! 
 python -m venv venv
 source venv/bin/activate  # Sur Windows: venv\Scripts\activate
 
