@@ -1,0 +1,3 @@
+from .settings import DATABASE_CONFIG, SERVER_CONFIG
+
+__all__ = ['DATABASE_CONFIG', 'API_CONFIG']
