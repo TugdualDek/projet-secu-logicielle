@@ -36,12 +36,12 @@ class DatabaseConnection:
     def get_session(self):
         """Retourne une nouvelle session de base de données"""
         return self.Session()
-    
+
     def close_session(self, session):
         """Ferme une session de base de données"""
         if session:
             session.close()
-    
+
     def dispose(self):
         """Libère toutes les connexions du pool"""
         self.Session.remove()
