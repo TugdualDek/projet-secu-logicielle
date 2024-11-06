@@ -1,41 +1,21 @@
-import subprocess
 import os
 from flask import Flask, send_from_directory
-from backend.main import create_app
+from backend.main import create_api  # Importer la fonction qui crée l'API
 
 app = Flask(__name__, static_folder='frontend/build')
-api = create_app() 
+api_app = create_api()  # Crée l'application API sans lancer un serveur séparé
 
-""" @app.route('/', defaults={'path': ''})
+# Enregistre le blueprint directement dans l'application principale
+app.register_blueprint(api_app.blueprints['api'], url_prefix='/api')
+
+@app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
+    # Sert les fichiers statiques du frontend
     if path and os.path.exists(app.static_folder + '/' + path):
         return send_from_directory(app.static_folder, path)
-    return send_from_directory(app.static_folder, 'index.html') """
-
-# Toutes les routes /api sont redirigées vers le backend
-@app.route('/api/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def api_proxy(path):
-    return api.handle_request()
-
-def start_development_server():
-    # Démarrage du serveur de développement React
-    return False
-"""    frontend_process = subprocess.Popen(
-        'npm start',
-        shell=True,
-        cwd='./frontend'
-    )
-
-    try:
-        # Démarrage du serveur Flask
-        app.run(port=5000, debug=True)
-    finally:
-        frontend_process.terminate() """
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
-    if os.environ.get('FLASK_ENV') == 'development':
-        start_development_server()
-    else:
-        # Mode production
-        app.run(host='0.0.0.0', port=5000)
+    # Lancement du serveur unique pour les routes API et le frontend
+    app.run(host='0.0.0.0', port=5000, debug=True)

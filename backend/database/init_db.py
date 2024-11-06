@@ -1,54 +1,28 @@
-import psycopg2
-from ..config.settings import DATABASE_CONFIG
+from sqlalchemy import inspect
+from .models.base import Base
+from .models.scan_model import Scan
+from .models.report_model import Report
+from .connection import DatabaseConnection
+
+def check_tables_exist():
+    """Check if all required tables exist"""
+    db = DatabaseConnection.get_instance()
+    inspector = inspect(db.engine)
+    existing_tables = set(inspector.get_table_names())
+    required_tables = {'scans', 'reports'}
+    return required_tables.issubset(existing_tables)
 
 def init_database():
     """Initialize the database and create tables if they don't exist"""
-    conn = None
+    if check_tables_exist():
+        print("Database tables already exist!")
+        return False
+        
     try:
-        # Connexion à la base de données
-        conn = psycopg2.connect(
-            dbname=DATABASE_CONFIG['dbname'],
-            user=DATABASE_CONFIG['user'],
-            password=DATABASE_CONFIG['password'],
-            host=DATABASE_CONFIG['host'],
-            port=DATABASE_CONFIG['port']
-        )
-        
-        # Création d'un curseur
-        cur = conn.cursor()
-        
-        # Définition des tables
-        create_tables = """
-        CREATE TABLE IF NOT EXISTS scans (
-            id SERIAL PRIMARY KEY,
-            target_url VARCHAR(255) NOT NULL,
-            status VARCHAR(50) NOT NULL,
-            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            completed_at TIMESTAMP
-        );
-
-        CREATE TABLE IF NOT EXISTS reports (
-            id SERIAL PRIMARY KEY,
-            scan_id INTEGER REFERENCES scans(id),
-            vulnerability_type VARCHAR(100),
-            severity VARCHAR(50),
-            description TEXT,
-            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-        """
-        
-        # Exécution des requêtes de création
-        cur.execute(create_tables)
-        
-        # Validation des changements
-        conn.commit()
-        print("Database initialized successfully!")
-        
-    except psycopg2.Error as e:
+        db = DatabaseConnection.get_instance()
+        Base.metadata.create_all(db.engine)
+        print("Database tables created successfully!")
+        return True
+    except Exception as e:
         print(f"Error initializing database: {e}")
         raise e
-    
-    finally:
-        if conn:
-            cur.close()
-            conn.close()

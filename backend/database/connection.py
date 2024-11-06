@@ -1,32 +1,48 @@
-import psycopg2
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
 from ..config.settings import DATABASE_CONFIG
 
 class DatabaseConnection:
     _instance = None
-
+    
     @classmethod
     def get_instance(cls):
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
-
+    
     def __init__(self):
-        self.conn = None
-
-    def connect(self):
-        try:
-            self.conn = psycopg2.connect(
-                dbname=DATABASE_CONFIG['dbname'],
-                user=DATABASE_CONFIG['user'],
-                password=DATABASE_CONFIG['password'],
-                host=DATABASE_CONFIG['host'],
-                port=DATABASE_CONFIG['port']
-            )
-            return self.conn
-        except psycopg2.Error as e:
-            print(f"Error connecting to database: {e}")
-            raise
-
-    def close(self):
-        if self.conn:
-            self.conn.close()
+        # Création de l'URL de connexion SQLAlchemy
+        self.database_url = (
+            f"postgresql://{DATABASE_CONFIG['user']}:{DATABASE_CONFIG['password']}"
+            f"@{DATABASE_CONFIG['host']}:{DATABASE_CONFIG['port']}/{DATABASE_CONFIG['dbname']}"
+        )
+        
+        # Création du moteur SQLAlchemy
+        self.engine = create_engine(
+            self.database_url,
+            echo=True,  # Mettre à True pour voir les requêtes SQL
+            pool_size=5,
+            max_overflow=10,
+            pool_timeout=30
+        )
+        
+        # Création de la session factory
+        session_factory = sessionmaker(bind=self.engine)
+        
+        # Création d'une session thread-safe
+        self.Session = scoped_session(session_factory)
+    
+    def get_session(self):
+        """Retourne une nouvelle session de base de données"""
+        return self.Session()
+    
+    def close_session(self, session):
+        """Ferme une session de base de données"""
+        if session:
+            session.close()
+    
+    def dispose(self):
+        """Libère toutes les connexions du pool"""
+        self.Session.remove()
+        self.engine.dispose()

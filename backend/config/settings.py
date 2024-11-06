@@ -1,7 +1,7 @@
 import os
 
 DATABASE_CONFIG = {
-    'dbname': os.getenv('DB_NAME', 'vulnscan'),
+    'dbname': os.getenv('DB_NAME', 'vulnerability_scanner'),
     'user': os.getenv('DB_USER', 'postgres'),
     'password': os.getenv('DB_PASSWORD', 'password'),
     'host': os.getenv('DB_HOST', 'localhost'),

@@ -1,74 +1,33 @@
-from ..connection import DatabaseConnection
+from ..models.report_model import Scan
 
 class ScanQueries:
-    @staticmethod
-    def create_scan(target_url):
-        db = DatabaseConnection.get_instance()
-        conn = db.connect()
-        
-        try:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    INSERT INTO scans (target_url, status, created_at)
-                    VALUES (%s, %s, NOW())
-                    RETURNING id, target_url, status, created_at, completed_at
-                """, (target_url, 'pending'))
-                conn.commit()
-                return cur.fetchone()
-        except Exception as e:
-            conn.rollback()
-            raise e
+    def __init__(self, session):
+        self.session = session
 
-    @staticmethod
-    def get_scan_by_id(scan_id):
-        db = DatabaseConnection.get_instance()
-        conn = db.connect()
-        
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, target_url, status, created_at, completed_at
-                FROM scans WHERE id = %s
-            """, (scan_id,))
-            return cur.fetchone()
+    def create_scan(self, target_url, status='pending'):
+        scan = Scan(target_url=target_url, status=status)
+        self.session.add(scan)
+        self.session.commit()
+        return scan
 
-    @staticmethod
-    def update_scan_status(scan_id, status):
-        db = DatabaseConnection.get_instance()
-        conn = db.connect()
-        
-        try:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    UPDATE scans SET status = %s, completed_at = NOW() WHERE id = %s
-                """, (status, scan_id))
-                conn.commit()
-        except Exception as e:
-            conn.rollback()
-            raise e
-        
-    @staticmethod
-    def get_all_scans():
-        db = DatabaseConnection.get_instance()
-        conn = db.connect()
+    def get_scan_by_id(self, scan_id):
+        return self.session.query(Scan).filter(Scan.id == scan_id).first()
+    
+    def update_scan_status(self, scan_id, status):
+        scan = self.get_scan_by_id(scan_id)
+        if scan:
+            scan.status = status
+            self.session.commit()
+            return scan
+        return None
+    
+    def get_all_scans(self):
+        return self.session.query(Scan).all()
 
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, target_url, status, created_at, completed_at
-                FROM scans
-            """)
-            return cur.fetchall()
-        
-    @staticmethod
-    def delete_scan(scan_id):
-        db = DatabaseConnection.get_instance()
-        conn = db.connect()
-        
-        try:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    DELETE FROM scans WHERE id = %s
-                """, (scan_id,))
-                conn.commit()
-        except Exception as e:
-            conn.rollback()
-            raise e
+    def delete_scan(self, scan_id):
+        scan = self.get_scan_by_id(scan_id)
+        if scan:
+            self.session.delete(scan)
+            self.session.commit()
+            return True
+        return False
