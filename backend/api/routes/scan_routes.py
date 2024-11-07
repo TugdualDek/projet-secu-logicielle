@@ -14,7 +14,7 @@ def get_all_scans():
         db.rollback()  # En cas d'erreur, rollback
         return jsonify({'error': str(e)}), 500
     finally:
-        DatabaseConnection.get_instance().close_session(db) 
+        DatabaseConnection.get_instance().close_session(db)  # Ferme la session
 
 @scans_bp.route('/<int:scan_id>', methods=['GET']) 
 def get_scan(scan_id):
