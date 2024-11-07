@@ -1,6 +1,7 @@
 import os
 from flask import Flask, send_from_directory
 from backend.main import create_api  # Importer la fonction qui crée l'API
+from backend.config.settings import API_CONFIG
 
 app = Flask(__name__, static_folder='frontend/build')
 api_app = create_api()  # Crée l'application API sans lancer un serveur séparé
@@ -18,4 +19,4 @@ def serve(path):
 
 if __name__ == '__main__':
     # Lancement du serveur unique pour les routes API et le frontend
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host=API_CONFIG['HOST'], port=API_CONFIG['PORT'], debug=API_CONFIG['DEBUG'])
