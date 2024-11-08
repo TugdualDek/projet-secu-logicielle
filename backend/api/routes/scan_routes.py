@@ -1,8 +1,6 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from ...database.models.scan_model import Scan
 from ...database.connection import DatabaseConnection
-from ...kernel import Kernel
-from ...kernel.module_loader import load_workflow
 
 scans_bp = Blueprint('scans', __name__)
 
@@ -90,25 +88,55 @@ def delete_scan(scan_id):
 
 @scans_bp.route('/scan', methods=['POST'])
 def start_scan():
-    data = request.json
-    workflow_name = data.get('workflow_name')
+    data = request.get_json()
     target = data.get('target')
 
     # Valider les données
-    if not workflow_name or not target:
-        return jsonify({'error': 'Missing parameters'}), 400
+    if not target:
+        return jsonify({'error': 'Missing parameter "target"'}), 400
 
     # Créer une entrée de scan en base de données
-    scan_id = create_scan(workflow_name, target)
+    db = DatabaseConnection.get_instance().get_session()
+    try:
+        new_scan = Scan(target_url=target, status='pending')
+        db.add(new_scan)
+        db.commit()
+        scan_id = new_scan.id
+    except Exception as e:
+        db.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
 
-    # Lancer le scan (asynchrone si possible)
-    kernel = Kernel()
+    # Accéder au kernel via current_app
+    kernel = current_app.kernel
+
+    # Préparer le contexte pour le scan
     context = {'target': target}
-    workflow = load_workflow(workflow_name)
-    result = kernel.execute_workflow(workflow, context)
 
-    # Mettre à jour le statut du scan en base de données
-    # ...
+    # Charger tous les workflows disponibles
+    workflows = kernel.load_workflows()
+
+    # Exécuter les workflows avec le kernel
+    for workflow_name, workflow in workflows.items():
+        try:
+            result = kernel.execute_workflow(workflow, context)
+            # Traiter le résultat, par exemple, l'enregistrer en base de données
+        except Exception as e:
+            # Gérer les erreurs si un workflow échoue
+            pass
+
+    # Mettre à jour le statut du scan
+    db = DatabaseConnection.get_instance().get_session()
+    try:
+        scan = db.query(Scan).filter_by(id=scan_id).first()
+        scan.status = 'completed'
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
 
     return jsonify({'scan_id': scan_id}), 202
 
