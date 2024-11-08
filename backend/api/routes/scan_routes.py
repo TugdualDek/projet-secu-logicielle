@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from ...database.models.scan_model import Scan
 from ...database.connection import DatabaseConnection
+from ...kernel import Kernel
+from ...kernel.module_loader import load_workflow
 
 scans_bp = Blueprint('scans', __name__)
 
@@ -85,3 +87,35 @@ def delete_scan(scan_id):
         return jsonify({'error': str(e)}), 500
     finally:
         DatabaseConnection.get_instance().close_session(db)  # Ferme la session
+
+@scans_bp.route('/scan', methods=['POST'])
+def start_scan():
+    data = request.json
+    workflow_name = data.get('workflow_name')
+    target = data.get('target')
+
+    # Valider les données
+    if not workflow_name or not target:
+        return jsonify({'error': 'Missing parameters'}), 400
+
+    # Créer une entrée de scan en base de données
+    scan_id = create_scan(workflow_name, target)
+
+    # Lancer le scan (asynchrone si possible)
+    kernel = Kernel()
+    context = {'target': target}
+    workflow = load_workflow(workflow_name)
+    result = kernel.execute_workflow(workflow, context)
+
+    # Mettre à jour le statut du scan en base de données
+    # ...
+
+    return jsonify({'scan_id': scan_id}), 202
+
+@scans_bp.route('/scan/<int:scan_id>', methods=['GET'])
+def get_scan_status(scan_id):
+    scan = get_scan(scan_id)
+    if scan:
+        return jsonify({'scan_id': scan_id, 'status': scan.status}), 200
+    else:
+        return jsonify({'error': 'Scan not found'}), 404
