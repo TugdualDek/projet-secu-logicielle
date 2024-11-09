@@ -28,10 +28,11 @@ Ce projet est fait dans un cadre pédagogique uniquement, nous ne pouvons pas ê
    ```bash
    pip3 install -r requirements.txt
    ```
+4. Créer un fichier `.env` à la racine du projet et modifiez le en fonction de vos besoins.
 
 ## Utilisation
 
-1. Lancez l'analyse statique :
+1. Lancez le projet :
    ```bash
    python3 server.py
    ```
