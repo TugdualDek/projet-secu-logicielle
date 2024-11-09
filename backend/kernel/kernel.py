@@ -1,4 +1,4 @@
-from backend.kernel.modules import load_modules
+from backend.kernel.module_loader import load_modules
 
 class Kernel:
     def __init__(self):

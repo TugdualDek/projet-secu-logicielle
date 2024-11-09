@@ -11,7 +11,7 @@ app.kernel = Kernel()  # Crée une instance du Kernel
 api_app = create_api(app)  # Crée l'application API sans lancer un serveur séparé
 
 # Enregistre le blueprint directement dans l'application principale
-app.register_blueprint(api_app.blueprints['api'], url_prefix='/api')
+#app.register_blueprint(api_app.blueprints['api'], url_prefix='/api')
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
