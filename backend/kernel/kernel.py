@@ -21,9 +21,13 @@ class Kernel:
             module_name = step['module']
             params = step.get('params', {})
 
-            # Substituer les variables dans les paramètres
+            # Fusionner les paramètres statiques avec les paramètres dynamiques
+            # Les paramètres dynamiques dans le contexte auront la priorité
+            merged_params = {**params, **context}
+
+            # Substituer les variables dans les paramètres fusionnés
             substituted_params = {}
-            for key, value in params.items():
+            for key, value in merged_params.items():
                 if isinstance(value, str):
                     # Trouver toutes les variables dans la forme ${variable}
                     matches = pattern.findall(value)
@@ -38,9 +42,14 @@ class Kernel:
             # Mettre à jour le contexte avec les paramètres substitués
             context.update(substituted_params)
 
+            print(f"Exécution du module: {module_name}")
+            print(f"Contexte: {context}")
+
             module = self.modules.get(module_name)
             if module:
                 context = module.run(context)
             else:
                 raise Exception(f"Module {module_name} non trouvé")
+
+            print(f"Contexte après exécution: {context}")
         return context

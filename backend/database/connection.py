@@ -21,7 +21,7 @@ class DatabaseConnection:
         # Création du moteur SQLAlchemy
         self.engine = create_engine(
             self.database_url,
-            echo=True,  # Mettre à True pour voir les requêtes SQL
+            echo=False,  # Mettre à True pour voir les requêtes SQL
             pool_size=5,
             max_overflow=10,
             pool_timeout=30
