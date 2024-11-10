@@ -2,7 +2,7 @@ import importlib
 import os
 import sys
 
-MODULES_DIR = os.path.join(os.path.dirname(__file__), 'modules')
+MODULES_DIR = "backend/scanner/modules"
 
 def load_modules():
     modules = {}

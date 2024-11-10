@@ -1,0 +1,3 @@
+- module: http_request
+  params:
+    url: "${target}"

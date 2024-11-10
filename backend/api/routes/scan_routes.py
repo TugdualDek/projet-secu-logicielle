@@ -62,17 +62,13 @@ def start_scan():
     # Préparer le contexte pour le scan
     context = {'target': target}
 
-    # Charger tous les workflows disponibles
-    workflows = kernel.load_workflows()
-
-    # Exécuter les workflows avec le kernel
-    for workflow_name, workflow in workflows.items():
-        try:
-            result = kernel.execute_workflow(workflow, context)
-            # Traiter le résultat, par exemple, l'enregistrer en base de données
-        except Exception as e:
-            # Gérer les erreurs si un workflow échoue
-            pass
+    # Exécuter tous les workflows
+    try:
+        kernel.execute_all_workflows(context)
+        # Traiter le résultat si nécessaire
+    except Exception as e:
+        # Gérer les erreurs
+        pass
 
     # Mettre à jour le statut du scan
     db = DatabaseConnection.get_instance().get_session()
