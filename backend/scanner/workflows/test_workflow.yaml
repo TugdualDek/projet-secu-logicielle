@@ -1,8 +1,10 @@
-- module: http_request
-  params:
-    url: "${target}"
-    timeout: 10
-
-- module: process_response
-  params:
-    expected_status: "200"
+name: security_headers_cookies_cors_workflow
+description: Vérification des en-têtes de sécurité, des cookies et de la configuration CORS
+steps:
+  - module: http_request
+    params:
+      url: "{{ target }}"
+      timeout: 10
+  - module: analyze_headers
+  - module: analyze_cookies
+  - module: cors_tester

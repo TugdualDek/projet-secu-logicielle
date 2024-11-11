@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, request, jsonify, current_app
 from ...database.models.scan_model import Scan
 from ...database.connection import DatabaseConnection
@@ -59,30 +60,47 @@ def start_scan():
     # Accéder au kernel via current_app
     kernel = current_app.kernel
 
-    # Préparer le contexte pour le scan
-    context = {'target': target}
-
-    # Exécuter tous les workflows
     try:
-        kernel.execute_all_workflows(context)
-        # Traiter le résultat si nécessaire
+        # Exécuter les workflows et récupérer les résultats
+        context = {'target': target, 'scan_id': scan_id}
+        final_results = kernel.execute_all_workflows(context)
     except Exception as e:
-        # Gérer les erreurs
-        pass
+        # En cas d'erreur, mettre à jour le statut du scan en 'failed'
+        db = DatabaseConnection.get_instance().get_session()
+        try:
+            scan = db.query(Scan).filter_by(id=scan_id).first()
+            if scan:
+                scan.status = 'failed'
+                db.commit()
+        except Exception as db_error:
+            db.rollback()
+            print(f"Erreur lors de la mise à jour du statut du scan : {db_error}")
+        finally:
+            db.close()
+        return jsonify({'error': str(e)}), 500
 
-    # Mettre à jour le statut du scan
+    # Stocker les résultats du scan dans la base de données
     db = DatabaseConnection.get_instance().get_session()
     try:
         scan = db.query(Scan).filter_by(id=scan_id).first()
-        scan.status = 'completed'
-        db.commit()
+        if scan:
+            scan.status = 'completed'
+            # Convertir les résultats finaux en JSON pour les stocker
+            scan.results = json.dumps(final_results)
+            db.commit()
+        else:
+            return jsonify({'error': 'Scan not found'}), 404
     except Exception as e:
         db.rollback()
         return jsonify({'error': str(e)}), 500
     finally:
         db.close()
 
-    return jsonify({'scan_id': scan_id}), 202
+    # Renvoyer les résultats dans la réponse de l'API
+    return jsonify({
+        'scan_id': scan_id,
+        'results': final_results
+    }), 200
 
 # Route pour supprimer un scan par ID
 @scans_bp.route('/<int:scan_id>', methods=['DELETE'])
@@ -102,41 +120,22 @@ def delete_scan(scan_id):
     finally:
         DatabaseConnection.get_instance().close_session(db)  # Ferme la session
 
-""" @scans_bp.route('/', methods=['POST'])
-def create_scan():
-    db = DatabaseConnection.get_instance().get_session()  # Récupère la session
+# Route pour récupérer les résultats d'un scan par ID
+@scans_bp.route('/<int:scan_id>/results', methods=['GET'])
+def get_scan_results(scan_id):
+    db = DatabaseConnection.get_instance().get_session()
     try:
-        data = request.get_json()  # Récupère les données envoyées dans le body de la requête
-        new_scan = Scan(
-            target_url=data['target_url'],  # Crée un nouveau scan
-            status='pending'
-        )
-        db.add(new_scan)  # Ajoute le scan à la session
-        db.commit()  # Valide la transaction
-        return jsonify(new_scan.to_dict()), 201  # Retourne le scan créé avec un code 201
-    except Exception as e:
-        db.rollback()  # En cas d'erreur, rollback
-        return jsonify({'error': str(e)}), 500
-    finally:
-        DatabaseConnection.get_instance().close_session(db)  # Ferme la session """
-
-""" @scans_bp.route('/<int:scan_id>', methods=['PUT'])
-def update_scan(scan_id):
-    db = DatabaseConnection.get_instance().get_session()  # Récupère la session
-    try:
-        scan = db.query(Scan).filter_by(id=scan_id).first()  # Recherche le scan par ID
-        if scan is None:
+        scan = db.query(Scan).filter_by(id=scan_id).first()
+        if scan:
+            return jsonify({
+                'scan_id': scan.id,
+                'status': scan.status,
+                'results': json.loads(scan.results) if scan.results else None
+            }), 200
+        else:
             return jsonify({'error': 'Scan not found'}), 404
-        
-        # Mise à jour des attributs du scan avec les données envoyées
-        data = request.get_json()
-        for key, value in data.items():
-            setattr(scan, key, value)
-
-        db.commit()  # Valide la transaction
-        return jsonify(scan.to_dict()), 200  # Retourne le scan mis à jour
     except Exception as e:
-        db.rollback()  # En cas d'erreur, rollback
+        db.rollback()
         return jsonify({'error': str(e)}), 500
     finally:
-        DatabaseConnection.get_instance().close_session(db)  # Ferme la session """
+        db.close()
