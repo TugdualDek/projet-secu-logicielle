@@ -9,6 +9,8 @@ class Module(BaseModule):
             response = requests.get(url, timeout=timeout)
             # Stocker uniquement les en-têtes nécessaires pour les analyses suivantes
             context['response_headers'] = dict(response.headers)
+            # Stock les cookies
+            context['response_cookies'] = response.cookies
             # Vous pouvez stocker d'autres informations si nécessaire, par exemple :
             # context['status_code'] = response.status_code
             # context['response_content'] = response.text

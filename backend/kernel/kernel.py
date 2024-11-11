@@ -2,6 +2,23 @@ import re
 from backend.kernel.module_loader import load_modules
 from backend.kernel.workflow_parser import load_workflow, get_all_workflows
 
+def substitute_variables(value, context, pattern):
+        if isinstance(value, str):
+            matches = pattern.findall(value)
+            for var in matches:
+                if var in context:
+                    value = re.sub(r'\{\{\s*' + var + r'\s*\}\}', str(context[var]), value)
+                else:
+                    raise Exception(f"Variable {var} non trouvée dans le contexte")
+            return value
+        elif isinstance(value, list):
+            return [substitute_variables(item, context, pattern) for item in value]
+        elif isinstance(value, dict):
+            return {k: substitute_variables(v, context, pattern) for k, v in value.items()}
+        else:
+            # Pour les autres types (int, float, bool, etc.), on retourne la valeur telle quelle
+            return value
+
 class Kernel:
     def __init__(self):
         self.modules = load_modules()
@@ -34,18 +51,7 @@ class Kernel:
             merged_params = {**params}
 
             # Substituer les variables dans les paramètres fusionnés
-            substituted_params = {}
-            for key, value in merged_params.items():
-                if isinstance(value, str):
-                    # Trouver toutes les variables dans la forme {{variable}}
-                    matches = pattern.findall(value)
-                    for var in matches:
-                        if var in context:
-                            # Remplacer {{variable}} par sa valeur dans le contexte
-                            value = re.sub(r'\{\{\s*' + var + r'\s*\}\}', str(context[var]), value)
-                        else:
-                            raise Exception(f"Variable {var} non trouvée dans le contexte")
-                substituted_params[key] = value
+            substituted_params = substitute_variables(merged_params, context, pattern)
 
             # Mettre à jour le contexte avec les paramètres substitués
             context.update(substituted_params)

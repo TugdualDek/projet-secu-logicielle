@@ -3,12 +3,7 @@ from base_module import BaseModule
 
 class Module(BaseModule):
     def run(self, context):
-        headers = context.get('response_headers')
-        if not headers:
-            context.setdefault('errors', []).append("Aucune en-tête trouvée pour l'analyse des cookies.")
-            return context
-
-        cookies = headers.get('Set-Cookie')
+        cookies = context.get('response_cookies')
         if not cookies:
             context.setdefault('results', {})['cookies_analysis'] = "Aucun cookie trouvé."
             return context

@@ -8,3 +8,8 @@ steps:
   - module: analyze_headers
   - module: analyze_cookies
   - module: cors_tester
+    params:
+      test_origins:
+        - "{{ target }}"
+        - "http://evil.com"
+        - "null"
