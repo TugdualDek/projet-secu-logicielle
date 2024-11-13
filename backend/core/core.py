@@ -1,6 +1,6 @@
 import re
-from backend.kernel.module_loader import load_modules
-from backend.kernel.workflow_parser import load_workflow, get_all_workflows
+from backend.core.module_loader import load_modules
+from backend.core.workflow_parser import load_workflow, get_all_workflows
 
 def substitute_variables(value, context, pattern):
         if isinstance(value, str):
@@ -21,9 +21,14 @@ def substitute_variables(value, context, pattern):
 
 class Kernel:
     def __init__(self):
-        self.modules = load_modules()
+        self.modules = None
+
+    def load_modules(self):
+        if self.modules is None:
+            self.modules = load_modules()  # Chargement différé
 
     def execute_all_workflows(self, context):
+        self.load_modules()
         workflows = get_all_workflows()
         combined_results = {}
 
@@ -37,6 +42,7 @@ class Kernel:
 
         print(f"Résultats combinés de tous les workflows: {combined_results}")
         # Retourner les résultats combinés de tous les workflows
+        self.modules = None
         return combined_results
 
     def execute_workflow(self, workflow_name, context):

@@ -1,6 +1,6 @@
 from backend.database.connection import DatabaseConnection
 from backend.database.models.scan_model import Scan
-from backend.kernel.kernel import Kernel
+from backend.core.core import Kernel
 import json
 
 def run_scan_task(scan_id):

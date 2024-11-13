@@ -2,12 +2,9 @@ import os
 from flask import Flask, send_from_directory
 from backend.main import create_api  # Importer la fonction qui crée l'API
 from backend.config.settings import API_CONFIG
-from backend.kernel.kernel import Kernel
 from waitress import serve
 
 app = Flask(__name__, static_folder='frontend/build')
-
-app.kernel = Kernel()  # Crée une instance du Kernel
 
 api_app = create_api(app)  # Crée l'application API sans lancer un serveur séparé
 
