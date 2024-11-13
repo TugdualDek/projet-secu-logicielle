@@ -2,6 +2,14 @@ import json
 from flask import Blueprint, request, jsonify, current_app
 from ...database.models.scan_model import Scan
 from ...database.connection import DatabaseConnection
+from ...config.settings import REDIS_CONFIG
+from ...tasks import run_scan_task
+from rq import Queue
+from redis import Redis
+
+# Créez une connexion Redis et initialisez la queue
+redis_conn = Redis(host=REDIS_CONFIG['HOST'], port=REDIS_CONFIG['PORT'], db=0)
+q = Queue('scan_tasks', connection=redis_conn)
 
 scans_bp = Blueprint('scans', __name__)
 
@@ -51,55 +59,20 @@ def start_scan():
         db.add(new_scan)
         db.commit()
         scan_id = new_scan.id
+        scan_status = new_scan.status
     except Exception as e:
         db.rollback()
         return jsonify({'error': str(e)}), 500
     finally:
         db.close()
 
-    # Accéder au kernel via current_app
-    kernel = current_app.kernel
-
-    try:
-        # Exécuter les workflows et récupérer les résultats
-        context = {'target': target, 'scan_id': scan_id}
-        final_results = kernel.execute_all_workflows(context)
-    except Exception as e:
-        # En cas d'erreur, mettre à jour le statut du scan en 'failed'
-        db = DatabaseConnection.get_instance().get_session()
-        try:
-            scan = db.query(Scan).filter_by(id=scan_id).first()
-            if scan:
-                scan.status = 'failed'
-                db.commit()
-        except Exception as db_error:
-            db.rollback()
-            print(f"Erreur lors de la mise à jour du statut du scan : {db_error}")
-        finally:
-            db.close()
-        return jsonify({'error': str(e)}), 500
-
-    # Stocker les résultats du scan dans la base de données
-    db = DatabaseConnection.get_instance().get_session()
-    try:
-        scan = db.query(Scan).filter_by(id=scan_id).first()
-        if scan:
-            scan.status = 'completed'
-            # Convertir les résultats finaux en JSON pour les stocker
-            scan.results = json.dumps(final_results)
-            db.commit()
-        else:
-            return jsonify({'error': 'Scan not found'}), 404
-    except Exception as e:
-        db.rollback()
-        return jsonify({'error': str(e)}), 500
-    finally:
-        db.close()
+    # Ajouter la tâche à la queue RQ
+    job = q.enqueue(run_scan_task, target, scan_id)
 
     # Renvoyer les résultats dans la réponse de l'API
     return jsonify({
         'scan_id': scan_id,
-        'results': final_results
+        'status': scan_status,
     }), 200
 
 # Route pour supprimer un scan par ID
@@ -131,6 +104,24 @@ def get_scan_results(scan_id):
                 'scan_id': scan.id,
                 'status': scan.status,
                 'results': json.loads(scan.results) if scan.results else None
+            }), 200
+        else:
+            return jsonify({'error': 'Scan not found'}), 404
+    except Exception as e:
+        db.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+@scans_bp.route('/<int:scan_id>/status', methods=['GET'])
+def get_scan_status(scan_id):
+    db = DatabaseConnection.get_instance().get_session()
+    try:
+        scan = db.query(Scan).filter_by(id=scan_id).first()
+        if scan:
+            return jsonify({
+                'scan_id': scan.id,
+                'status': scan.status
             }), 200
         else:
             return jsonify({'error': 'Scan not found'}), 404

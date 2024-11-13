@@ -14,3 +14,8 @@ API_CONFIG = {
     'PORT': os.getenv('PORT', 5000),
     'DEBUG': os.getenv('DEBUG', True)
 }
+
+REDIS_CONFIG = {
+    'HOST': os.getenv('REDIS_HOST', 'localhost'),
+    'PORT': os.getenv('REDIS_PORT', 6379)
+}
