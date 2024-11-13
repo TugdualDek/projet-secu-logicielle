@@ -1,9 +1,9 @@
-from database.models.scan_model import Scan
-from database.connection import DatabaseConnection
+from backend.database.connection import DatabaseConnection
+from backend.database.models.scan_model import Scan
 from backend.kernel.kernel import Kernel
 import json
 
-def run_scan_task(target, scan_id):
+def run_scan_task(scan_id):
     db = DatabaseConnection.get_instance().get_session()
     try:
         # Mettre à jour le statut du scan à "in_progress"
@@ -14,7 +14,7 @@ def run_scan_task(target, scan_id):
 
             # Exécuter le scan
             kernel = Kernel()
-            context = {'target': target, 'scan_id': scan_id}
+            context = {'target': scan.target_url, 'scan_id': scan_id}
             final_results = kernel.execute_all_workflows(context)
 
             # Mettre à jour le statut du scan à "completed" et stocker les résultats

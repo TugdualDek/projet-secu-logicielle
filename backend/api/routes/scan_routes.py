@@ -3,12 +3,12 @@ from flask import Blueprint, request, jsonify, current_app
 from ...database.models.scan_model import Scan
 from ...database.connection import DatabaseConnection
 from ...config.settings import REDIS_CONFIG
-from ...tasks import run_scan_task
+from backend.tasks import run_scan_task
 from rq import Queue
 from redis import Redis
 
 # Créez une connexion Redis et initialisez la queue
-redis_conn = Redis(host=REDIS_CONFIG['HOST'], port=REDIS_CONFIG['PORT'], db=0)
+redis_conn = Redis(host=REDIS_CONFIG['HOST'], port=REDIS_CONFIG['PORT'])
 q = Queue('scan_tasks', connection=redis_conn)
 
 scans_bp = Blueprint('scans', __name__)
@@ -67,7 +67,7 @@ def start_scan():
         db.close()
 
     # Ajouter la tâche à la queue RQ
-    job = q.enqueue(run_scan_task, target, scan_id)
+    q.enqueue(run_scan_task, scan_id)
 
     # Renvoyer les résultats dans la réponse de l'API
     return jsonify({
