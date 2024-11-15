@@ -1,9 +1,14 @@
 from flask import Flask
 from .config.settings import DATABASE_CONFIG, API_CONFIG
 from .database.init_db import init_database
-from .api.server import api  # Importation du blueprint api
+from .api.server import api
 
 def create_api(app=None):
+    """
+    create_api Crée l'application API Flask
+    :param app: Instance de l'application Flask
+    :return: Instance de l'application Flask
+    """
     if app is None:
         app = Flask(__name__)
 

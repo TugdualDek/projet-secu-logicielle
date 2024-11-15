@@ -7,6 +7,10 @@ class DatabaseConnection:
     
     @classmethod
     def get_instance(cls):
+        """
+        get_instance Récupère une instance de la connexion à la base de données
+        :return: Instance de la connexion à la base de données
+        """
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
@@ -18,7 +22,6 @@ class DatabaseConnection:
             f"@{DATABASE_CONFIG['host']}:{DATABASE_CONFIG['port']}/{DATABASE_CONFIG['dbname']}"
         )
         
-        # Création du moteur SQLAlchemy
         self.engine = create_engine(
             self.database_url,
             echo=False,  # Mettre à True pour voir les requêtes SQL
@@ -34,15 +37,23 @@ class DatabaseConnection:
         self.Session = scoped_session(session_factory)
     
     def get_session(self):
-        """Retourne une nouvelle session de base de données"""
+        """
+        get_session Récupère une session de base de données
+        :return: Session de base de données
+        """
         return self.Session()
 
     def close_session(self, session):
-        """Ferme une session de base de données"""
+        """
+        close_session Ferme une session de base de données
+        :param session: Session de base de données
+        """
         if session:
             session.close()
 
     def dispose(self):
-        """Libère toutes les connexions du pool"""
+        """
+        dispose Ferme la connexion à la base de données
+        """
         self.Session.remove()
         self.engine.dispose()

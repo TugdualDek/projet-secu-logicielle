@@ -1,5 +1,3 @@
-# backend/kernel/modules/base_module.py
-
 from abc import ABC, abstractmethod
 
 class BaseModule(ABC):

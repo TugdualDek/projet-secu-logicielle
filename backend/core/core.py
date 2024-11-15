@@ -3,31 +3,45 @@ from backend.core.module_loader import load_modules
 from backend.core.workflow_parser import load_workflow, get_all_workflows
 
 def substitute_variables(value, context, pattern):
-        if isinstance(value, str):
-            matches = pattern.findall(value)
-            for var in matches:
-                if var in context:
-                    value = re.sub(r'\{\{\s*' + var + r'\s*\}\}', str(context[var]), value)
-                else:
-                    raise Exception(f"Variable {var} non trouvée dans le contexte")
-            return value
-        elif isinstance(value, list):
-            return [substitute_variables(item, context, pattern) for item in value]
-        elif isinstance(value, dict):
-            return {k: substitute_variables(v, context, pattern) for k, v in value.items()}
-        else:
-            # Pour les autres types (int, float, bool, etc.), on retourne la valeur telle quelle
-            return value
+    """
+    substitute_variables Substitue les variables dans une valeur donnée en utilisant le contexte fourni.
+    :param value: Valeur à traiter
+    :param context: Contexte contenant les variables
+    :param pattern: Expression régulière pour identifier les variables
+    :return: Valeur avec les variables substituées
+    """
+    if isinstance(value, str):
+        matches = pattern.findall(value)
+        for var in matches:
+            if var in context:
+                value = re.sub(r'\{\{\s*' + var + r'\s*\}\}', str(context[var]), value)
+            else:
+                raise Exception(f"Variable {var} non trouvée dans le contexte")
+        return value
+    elif isinstance(value, list):
+        return [substitute_variables(item, context, pattern) for item in value]
+    elif isinstance(value, dict):
+        return {k: substitute_variables(v, context, pattern) for k, v in value.items()}
+    else:
+        # Pour les autres types (int, float, bool, etc.), on retourne la valeur telle quelle
+        return value
 
-class Kernel:
+class Core:
     def __init__(self):
         self.modules = None
 
     def load_modules(self):
+        """
+        load_modules Charge les modules disponibles
+        """
         if self.modules is None:
-            self.modules = load_modules()  # Chargement différé
+            self.modules = load_modules()
 
     def execute_all_workflows(self, context):
+        """
+        :param context: Contexte initial
+        :return: Résultats combinés de tous les workflows
+        """
         self.load_modules()
         workflows = get_all_workflows()
         combined_results = {}
@@ -46,6 +60,12 @@ class Kernel:
         return combined_results
 
     def execute_workflow(self, workflow_name, context):
+        """
+        execute_workflow Exécute un workflow donné
+        :param workflow_name: Nom du workflow
+        :param context: Contexte initial
+        :return: Résultats du workflow
+        """
         workflow = load_workflow(workflow_name)
         pattern = re.compile(r'\{\{\s*(\w+)\s*\}\}')
 
@@ -67,12 +87,10 @@ class Kernel:
 
             module = self.modules.get(module_name)
             if module:
-                # Exécuter le module et mettre à jour le contexte
                 context = module.run(context)
             else:
                 raise Exception(f"Module {module_name} non trouvé")
 
             print(f"Contexte après exécution: {context}")
 
-        # Retourner les résultats finaux du workflow
         return context.get('results', {})

@@ -5,6 +5,10 @@ import sys
 MODULES_DIR = "backend/scanner/modules"
 
 def load_modules():
+    """
+    load_modules Charge les modules disponibles
+    :return: Dictionnaire de modules
+    """
     modules = {}
     sys.path.insert(0, MODULES_DIR)
     for module_name in os.listdir(MODULES_DIR):
