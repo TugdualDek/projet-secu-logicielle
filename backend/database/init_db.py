@@ -1,8 +1,8 @@
 from sqlalchemy import inspect
-from .models.base import Base
-from .models.scan_model import Scan
-from .models.report_model import Report
-from .connection import DatabaseConnection
+from backend.database.models.base import Base
+from backend.database.models.scan_model import Scan
+from backend.database.models.report_model import Report
+from backend.database.connection import DatabaseConnection
 
 def check_tables_exist():
     """Check if all required tables exist"""

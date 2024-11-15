@@ -1,7 +1,7 @@
 from flask import Flask
-from .config.settings import DATABASE_CONFIG, API_CONFIG
-from .database.init_db import init_database
-from .api.server import api
+from backend.config.settings import DATABASE_CONFIG, API_CONFIG
+from backend.database.init_db import init_database
+from backend.api.server import api
 
 def create_api(app=None):
     """

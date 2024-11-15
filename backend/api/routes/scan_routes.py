@@ -1,8 +1,8 @@
 import json
 from flask import Blueprint, request, jsonify, current_app
-from ...database.models.scan_model import Scan
-from ...database.connection import DatabaseConnection
-from ...config.settings import REDIS_CONFIG
+from backend.database.models.scan_model import Scan
+from backend.database.connection import DatabaseConnection
+from backend.config.settings import REDIS_CONFIG
 from backend.tasks import run_scan_task
 from backend.api.utils import ErrorHandler
 from rq import Queue

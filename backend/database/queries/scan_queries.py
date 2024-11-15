@@ -1,4 +1,4 @@
-from ..models.report_model import Scan
+from backend.database.models.report_model import Scan
 
 class ScanQueries:
     def __init__(self, session):

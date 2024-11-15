@@ -1,6 +1,6 @@
 import json
 from sqlalchemy import Column, Integer, String, DateTime, text, Text
-from .base import Base
+from backend.database.models.base import Base
 
 class Scan(Base):
     __tablename__ = 'scans'

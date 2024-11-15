@@ -1,6 +1,7 @@
 import os
 from flask import Flask, send_from_directory
-from backend.main import create_api  # Importer la fonction qui crée l'API
+from werkzeug.utils import safe_join
+from backend.main import create_api
 from backend.api.utils import register_error_handlers
 from backend.config.settings import API_CONFIG
 from waitress import serve
@@ -9,18 +10,17 @@ app = Flask(__name__, static_folder='frontend/build')
 
 register_error_handlers(app)  # Enregistre les gestionnaires d'erreurs
 
-api_app = create_api(app)  # Crée l'application API sans lancer un serveur séparé
-
-# Enregistre le blueprint directement dans l'application principale
-#app.register_blueprint(api_app.blueprints['api'], url_prefix='/api')
+api_app = create_api(app) 
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
     # Sert les fichiers statiques du frontend
-    if path and os.path.exists(app.static_folder + '/' + path):
+    safe_path = safe_join(app.static_folder, path)
+    if os.path.exists(safe_path) and os.path.isfile(safe_path):
         return send_from_directory(app.static_folder, path)
     return send_from_directory(app.static_folder, 'index.html')
+
 
 if __name__ == '__main__':
     # Lancement du serveur unique pour les routes API et le frontend

@@ -1,5 +1,5 @@
 from flask import Blueprint
-from .routes.scan_routes import scans_bp
+from backend.api.routes.scan_routes import scans_bp
 from .routes.report_routes import reports_bp
 
 api = Blueprint('api', __name__)
