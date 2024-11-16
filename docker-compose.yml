@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=vulnerability_scanner
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:7.4-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+
+  scanner:
+    build: .
+    command: python server.py
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      - PYTHONPATH=/app
+      - DB_HOST=db
+      - REDIS_HOST=redis
+      - DB_PORT=5432
+      - DB_NAME=vulnerability_scanner
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - HOST=0.0.0.0
+      - DEBUG=True
+
+  worker:
+    build: .
+    command: rq worker scan_tasks --url redis://redis:6379
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      - PYTHONPATH=/app
+      - DB_HOST=db
+      - REDIS_HOST=redis
+      - DB_PORT=5432
+      - DB_NAME=vulnerability_scanner
+      - DB_USER=postgres
+      - DB_PASSWORD=password

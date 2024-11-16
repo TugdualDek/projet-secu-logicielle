@@ -30,6 +30,14 @@ Ce projet est fait dans un cadre pédagogique uniquement, nous ne pouvons pas ê
    ```
 4. Créer un fichier `.env` à la racine du projet et modifiez le en fonction de vos besoins.
 
+5. installer postgree sql
+6. installer docker desktop
+7. run python install requirements.txt
+8. run dans frontend npm install puis npm build
+9. revenir a la racine du projet 
+10. run docker-compose up --build
+11. aller http://127.0.0.1:5000/
+12. et ça marche.
 ## Utilisation
 
 1. Lancez le projet :

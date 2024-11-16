@@ -44,17 +44,22 @@ COPY server.py .
 # Étape 3 : Créer l'image finale
 FROM python:3.11-slim
 
-# Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers construits de l'application React
-COPY --from=build-react /app/build ./frontend/build
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copier le contenu de l'application Python
-COPY --from=build-python /app .
+# Copy requirements file
+COPY requirements.txt .
 
-# Exposer le port 5000
-EXPOSE 5000
+# Install Python dependencies
+RUN pip install -r requirements.txt
 
-# Définir la commande par défaut
-#CMD ["waitress-serve", "--host=0.0.0.0", "--port=5000", "server:app"]
+# Copy application files
+COPY . .
+
+ENV PYTHONPATH=/app

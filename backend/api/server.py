@@ -1,7 +1,6 @@
 from flask import Blueprint
 from backend.api.routes.scan_routes import scans_bp
-from .routes.report_routes import reports_bp
-
+from backend.api.routes.report_routes import reports_bp
 api = Blueprint('api', __name__)
 
 # Register route blueprints
