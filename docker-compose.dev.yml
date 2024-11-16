@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=vulnerability_scanner
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7.4-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server
