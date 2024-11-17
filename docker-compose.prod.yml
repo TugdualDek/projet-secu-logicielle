@@ -1,5 +1,4 @@
 services:
-
   db:
     image: postgres:17
     restart: always
@@ -14,18 +13,15 @@ services:
     image: redis:7.4-alpine
     restart: always
     ports:
-      - "6379:6379"
+      - "63790:6379"
     command: redis-server
 
   scanner:
     build: .
-    #command: ["waitress-serve", "--host=0.0.0.0", "--port=5000", "server:app"] # for production
-    command: ["python", "server.py"] # for development
+    command: ["waitress-serve", "--host=0.0.0.0", "--port=5000", "server:app"]
     restart: always
     ports:
       - "5000:5000"
-    volumes:
-      - .:/app
     depends_on:
       - db
       - redis
@@ -37,11 +33,8 @@ services:
   worker:
     build: .
     command: ["rq", "worker", "scan_tasks", "--with-scheduler"]
-    volumes:
-      - .:/app
     depends_on:
       - db
       - redis
     env_file:
       - .env
-
