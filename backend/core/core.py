@@ -1,6 +1,7 @@
 import re
 from backend.core.module_loader import load_modules
 from backend.core.workflow_parser import load_workflow, get_all_workflows
+from backend.tasks import save_results_callback
 
 def substitute_variables(value, context, pattern):
     """
@@ -13,10 +14,15 @@ def substitute_variables(value, context, pattern):
     if isinstance(value, str):
         matches = pattern.findall(value)
         for var in matches:
-            if var in context:
-                value = re.sub(r'\{\{\s*' + var + r'\s*\}\}', str(context[var]), value)
-            else:
-                raise Exception(f"Variable {var} non trouvée dans le contexte")
+            # Gérer les clés imbriquées
+            keys = var.split('.')
+            temp = context
+            for key in keys:
+                if key in temp:
+                    temp = temp[key]
+                else:
+                    raise Exception(f"Variable {var} non trouvée dans le contexte")
+            value = re.sub(r'\{\{\s*' + var + r'\s*\}\}', str(temp), value)
         return value
     elif isinstance(value, list):
         return [substitute_variables(item, context, pattern) for item in value]
@@ -44,20 +50,19 @@ class Core:
         """
         self.load_modules()
         workflows = get_all_workflows()
-        combined_results = {}
 
         for workflow_name in workflows:
             print(f"Exécution du workflow: {workflow_name}")
             workflow_context = context.copy()
             workflow_results = self.execute_workflow(workflow_name, workflow_context)
-        
-            # Ajouter les résultats du workflow au contexte global
-            combined_results[workflow_name] = workflow_results
 
-        print(f"Résultats combinés de tous les workflows: {combined_results}")
-        # Retourner les résultats combinés de tous les workflows
+            # Enregistrer les résultats du workflow actuel
+            save_results_callback(workflow_name, workflow_results)
+
+            # Nettoyer le contexte tout en conservant les données partagées
+            context = self.clean_context(workflow_context, context)
+            
         self.modules = None
-        return combined_results
 
     def execute_workflow(self, workflow_name, context):
         """
@@ -94,3 +99,12 @@ class Core:
             print(f"Contexte après exécution: {context}")
 
         return context.get('results', {})
+    
+    def clean_context(self, workflow_context, shared_context):
+        """
+        Nettoie le contexte en conservant les données partagées.
+        """
+        # Définissez les clés que vous souhaitez conserver
+        shared_keys = ['target', 'scan_id', 'shared_data']
+        new_context = {key: shared_context[key] for key in shared_keys if key in shared_context}
+        return new_context

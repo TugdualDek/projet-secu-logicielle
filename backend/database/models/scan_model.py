@@ -10,7 +10,6 @@ class Scan(Base):
     status = Column(String(50), nullable=False)
     created_at = Column(DateTime, server_default=text('CURRENT_TIMESTAMP'), nullable=False)
     completed_at = Column(DateTime, nullable=True)
-    results = Column(Text)
 
     # Méthode pour convertir l'objet en dictionnaire
     def to_dict(self):
