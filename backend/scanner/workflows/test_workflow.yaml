@@ -13,3 +13,7 @@ steps:
         - "{{ target }}"
         - "http://evil.com"
         - "null"
+  - module: results_saver
+    params:
+      vulnerability_type: "security_headers_cookies_cors"
+      vulnerability_name: "Security Headers, Cookies and CORS"
