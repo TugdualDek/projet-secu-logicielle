@@ -9,7 +9,7 @@ def get_all_reports():
     db = DatabaseConnection.get_instance().get_session()  # Récupère la session
     try:
         reports = db.query(Report).all()  # Récupère tous les rapports
-        return jsonify([report.to_dict() for report in reports]), 200
+        return jsonify([report.to_dict() for report in reports]), 200  
     except Exception as e:
         db.rollback()  # En cas d'erreur, rollback
         return jsonify({'error': str(e)}), 500

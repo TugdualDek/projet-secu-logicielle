@@ -4,8 +4,13 @@ from base_module import BaseModule
 class Module(BaseModule):
     def run(self, context):
         cookies = context.get('response_cookies')
+        module_results = context.setdefault('module_results', [])
         if not cookies:
-            context.setdefault('results', {})['cookies_analysis'] = "Aucun cookie trouvé."
+            module_results.append({
+                'Cookies Analysis': {
+                    'error': 'No cookies found in the response'
+                }
+            })
             return context
 
         cookie_parser = SimpleCookie()
@@ -21,5 +26,7 @@ class Module(BaseModule):
             }
             results[cookie_name] = attributes
 
-        context.setdefault('results', {})['cookies_analysis'] = results
+        module_results.append({
+            'Cookies Analysis': results
+        })
         return context

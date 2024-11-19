@@ -2,9 +2,17 @@ from base_module import BaseModule
 
 class Module(BaseModule):
     def run(self, context):
-        headers = context.get('response_headers')
+        headers = context.get('response_headers', {})
+        # Ajouter les résultats au contexte
+        module_results = context.setdefault('module_results', [])
         if not headers:
-            context.setdefault('errors', []).append("Aucune en-tête trouvée pour l'analyse des en-têtes.")
+            # on retourne dans module_results les informations sur l'erreur avec comme clé le nom du module
+            module_results.append({
+                'Header Analysis': {
+                    'error': 'No headers found in the response'
+                }
+            })
+
             return context
 
         security_headers = [
@@ -17,14 +25,20 @@ class Module(BaseModule):
             'Permissions-Policy'
         ]
 
-        results = {}
+        missing_headers = []
+        present_headers = []
         for header in security_headers:
-            value = headers.get(header)
-            results[header] = {
-                'present': value is not None,
-                'value': value
-            }
+            if header not in headers:
+                missing_headers.append(header)
+            else:
+                present_headers.append(header)
 
-        # Stocker les résultats finaux dans context['results']
-        context.setdefault('results', {})['security_headers_analysis'] = results
+        
+        if missing_headers:
+            module_results.append({
+                'Header Analysis': {
+                    'missing_headers': missing_headers,
+                    'present_headers': present_headers
+                }
+            })
         return context

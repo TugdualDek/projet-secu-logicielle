@@ -1,7 +1,6 @@
 import re
 from backend.core.module_loader import load_modules
 from backend.core.workflow_parser import load_workflow, get_all_workflows
-from backend.tasks import save_results_callback
 
 def substitute_variables(value, context, pattern):
     """
@@ -43,7 +42,7 @@ class Core:
         if self.modules is None:
             self.modules = load_modules()
 
-    def execute_all_workflows(self, context):
+    def execute_all_workflows(self, context, save_results_callback):
         """
         :param context: Contexte initial
         :return: Résultats combinés de tous les workflows

@@ -107,30 +107,6 @@ def delete_scan(scan_id):
     finally:
         DatabaseConnection.get_instance().close_session(db)
 
-@scans_bp.route('/<int:scan_id>/results', methods=['GET'])
-def get_scan_results(scan_id):
-    """
-    get_scan_results Récupère les résultats d'un scan par ID
-    :param scan_id: ID du scan
-    :return: Résultats du scan
-    """
-    db = DatabaseConnection.get_instance().get_session()
-    try:
-        scan = db.query(Scan).filter_by(id=scan_id).first()
-        if scan:
-            return jsonify({
-                'scan_id': scan.id,
-                'status': scan.status,
-                'results': json.loads(scan.results) if scan.results else None
-            }), 200
-        else:
-            return ErrorHandler.handle_error(None, 'Scan not found', 404)
-    except Exception as e:
-        db.rollback()
-        return ErrorHandler.handle_error(e, 'Failed to retrieve scan results', 500)
-    finally:
-        db.close()
-
 @scans_bp.route('/<int:scan_id>/status', methods=['GET'])
 def get_scan_status(scan_id):
     """
