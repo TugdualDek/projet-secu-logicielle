@@ -104,7 +104,7 @@ class Core:
         """
         Nettoie le contexte en conservant les données partagées.
         """
-        # Définissez les clés que vous souhaitez conserver
+        # Certaines clés ne doivent pas être supprimées du contexte
         shared_keys = ['target', 'scan_id', 'shared_data']
         new_context = {key: shared_context[key] for key in shared_keys if key in shared_context}
         return new_context

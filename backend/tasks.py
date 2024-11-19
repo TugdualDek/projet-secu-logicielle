@@ -7,6 +7,10 @@ import json
 
 
 def run_scan_task(scan_id):
+    """
+    run_scan_task Exécute un scan donné dans la queue
+    :param scan_id: ID du scan
+    """
     db = DatabaseConnection.get_instance().get_session()
     try:
         scan = db.query(Scan).filter_by(id=scan_id).first()
@@ -17,7 +21,6 @@ def run_scan_task(scan_id):
             def save_results_callback(workflow_name, workflow_results):
                 results = workflow_results.get('results', [])
                 for result in results:
-                    # enregistrer le resultat dans la table report
                     report = ReportQueries(db).create_report(scan_id, result['type'], result['name'], result['description'])
                     print(report.to_dict())
                 db.commit()
