@@ -20,16 +20,10 @@ def run_scan_task(scan_id):
             db.commit()
 
             def save_results_callback(workflow_name, workflow_results):
-                results = workflow_results.get('results', [])
-                print(f"Type de final_results: {type(results)}")
-                print(f"Contenu de final_results: {results}")
-                for result in results:
-                    print(f"Type de result: {type(result)}")
-                    print(f"Contenu de result: {result}")
+                for result in workflow_results:
                     # Construire le nouvel enregistrement Report
                     new_report = Report(
                         scan_id=scan_id,
-                        workflow_name=workflow_name,
                         vulnerability_type=result.get('vulnerability_type', 'Unknown'),
                         vulnerability_name=result.get('vulnerability_name', 'Unknown'),
                         description=result.get('description', ''),
