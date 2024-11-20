@@ -37,6 +37,8 @@ COPY backend/ ./backend
 # Copier les fichiers build de React - Correction du chemin
 COPY --from=build-react /app/frontend/build ./frontend/build
 
+COPY vulnerabilities/ ./vulnerabilities
+
 # Copier le fichier server.py
 COPY server.py .
 

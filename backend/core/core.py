@@ -59,7 +59,7 @@ class Core:
             save_results_callback(workflow_name, workflow_results)
 
             # Mettre à jour le contexte partagé si nécessaire
-            context.clean_context(workflow_context, context)
+            self.clean_context(workflow_context, context)
 
         self.modules = None
 
