@@ -1,6 +1,6 @@
 import re
 from backend.core.module_loader import load_modules
-from backend.core.workflow_parser import load_workflow, get_all_workflows
+from backend.core.workflow_parser import load_workflow, resolve_workflow_order
 
 def substitute_variables(value, context, pattern):
     """
@@ -48,9 +48,9 @@ class Core:
         :return: Résultats combinés de tous les workflows
         """
         self.load_modules()
-        workflows = get_all_workflows()
+        workflow_order = resolve_workflow_order()
 
-        for workflow_name in workflows:
+        for workflow_name in workflow_order:
             print(f"Exécution du workflow: {workflow_name}")
             workflow_context = context.copy()
             workflow_results = self.execute_workflow(workflow_name, workflow_context)
@@ -58,9 +58,9 @@ class Core:
             # Enregistrer les résultats du workflow actuel
             save_results_callback(workflow_name, workflow_results)
 
-            # Nettoyer le contexte tout en conservant les données partagées
-            context = self.clean_context(workflow_context, context)
-            
+            # Mettre à jour le contexte partagé si nécessaire
+            context.clean_context(workflow_context, context)
+
         self.modules = None
 
     def execute_workflow(self, workflow_name, context):

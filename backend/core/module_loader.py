@@ -2,7 +2,7 @@ import importlib
 import os
 import sys
 
-MODULES_DIR = "backend/scanner/modules"
+MODULES_DIR = "vulnerabilities/modules"
 
 def load_modules():
     """

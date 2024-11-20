@@ -1,5 +1,5 @@
 import json
-from sqlalchemy import Column, Integer, String, DateTime, text, Text
+from sqlalchemy import Column, Integer, String, DateTime, text, Text, Enum
 from backend.database.models.base import Base
 from sqlalchemy.orm import relationship
 
@@ -8,7 +8,7 @@ class Scan(Base):
     
     id = Column(Integer, primary_key=True)
     target_url = Column(String(255), nullable=False)
-    status = Column(String(50), nullable=False)
+    status = Column(Enum('pending', 'completed', 'in_progress', 'failed', name='scan_status'), default='pending')
     created_at = Column(DateTime, server_default=text('CURRENT_TIMESTAMP'), nullable=False)
     completed_at = Column(DateTime, nullable=True)
 
