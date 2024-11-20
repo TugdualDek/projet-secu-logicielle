@@ -52,21 +52,8 @@ logs/
 **/__pycache__/
 
 
-### react ###
-.DS_*
-logs
-**/*.backup.*
-**/*.back.*
-
-node_modules
-bower_components
-
-*.sublime*
-
-psd
-thumb
-sketch
-
+### NextJS ###
+# dependencies
 /node_modules
 /.pnp
 .pnp.js
@@ -74,16 +61,29 @@ sketch
 # testing
 /coverage
 
+# next.js
+**/.next/
+**/build/
+
 # production
 /build
 
 # misc
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+*.pem
 
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
