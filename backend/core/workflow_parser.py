@@ -33,6 +33,10 @@ def resolve_workflow_order():
     ordered_workflows = []
     rec_stack = set()
 
+    # Séparez les workflows sans dépendances
+    independent_workflows = [name for name, wf in workflows.items() if not wf.get('depends_on')]
+    independent_workflows.sort()  # Tri par ordre alphabétique
+
     def visit(workflow_name):
         if workflow_name in rec_stack:
             # Dépendance circulaire détectée
@@ -40,19 +44,20 @@ def resolve_workflow_order():
             raise Exception(f"Dépendance circulaire détectée : {cycle}")
         if workflow_name in visited:
             return
-        if workflow_name not in workflows:
-            raise Exception(f"Workflow {workflow_name} non trouvé")
         rec_stack.add(workflow_name)
         workflow = workflows[workflow_name]
         for dep in workflow.get('depends_on', []):
-            if dep not in workflows:
-                raise Exception(f"Dépendance non résolue : {dep} requis par {workflow_name}")
             visit(dep)
         rec_stack.remove(workflow_name)
         visited.add(workflow_name)
         ordered_workflows.append(workflow_name)
 
+    # Visitez d'abord les workflows avec dépendances
     for workflow_name in workflows.keys():
-        visit(workflow_name)
+        if workflows[workflow_name].get('depends_on'):
+            visit(workflow_name)
+
+    # Ajoutez ensuite les workflows indépendants triés
+    ordered_workflows.extend(independent_workflows)
 
     return ordered_workflows
