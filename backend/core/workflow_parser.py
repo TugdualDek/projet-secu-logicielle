@@ -1,7 +1,7 @@
 import yaml
 import os
 
-WORKFLOWS_DIR = "backend/scanner/workflows"
+WORKFLOWS_DIR = "vulnerabilities/workflows"
 
 def load_workflow(workflow_name):
     """

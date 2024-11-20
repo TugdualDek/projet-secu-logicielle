@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from ...database.models.report_model import Report
 from ...database.connection import DatabaseConnection
+from backend.api.utils import ErrorHandler
 
 reports_bp = Blueprint('reports', __name__)
 
@@ -16,7 +17,7 @@ def get_all_reports():
         return jsonify([report.to_dict() for report in reports]), 200  
     except Exception as e:
         db.rollback()  # En cas d'erreur, rollback
-        return jsonify({'error': str(e)}), 500
+        return ErrorHandler.handle_error(e, 'Failed to retrieve reports', 500)
     finally:
         DatabaseConnection.get_instance().close_session(db)
 
@@ -31,11 +32,11 @@ def get_report(report_id):
     try:
         report = db.query(Report).filter_by(id=report_id).first()
         if report is None:
-            return jsonify({'error': 'Report not found'}), 404
+            return ErrorHandler.handle_error(e, 'Report not found', 404)
         return jsonify(report.to_dict()), 200
     except Exception as e:
         db.rollback()  # En cas d'erreur, rollback
-        return jsonify({'error': str(e)}), 500
+        return ErrorHandler.handle_error(e, 'Failed to retrieve report', 500)
     finally:
         DatabaseConnection.get_instance().close_session(db)
 
@@ -50,13 +51,13 @@ def delete_report(report_id):
     try:
         report = db.query(Report).filter_by(id=report_id).first()
         if report is None:
-            return jsonify({'error': 'Report not found'}), 404
+            return ErrorHandler.handle_error(e, 'Report not found', 404)
 
         db.delete(report)
         db.commit()
         return '', 204  # Retourne un statut 204 sans contenu
     except Exception as e:
         db.rollback()  # En cas d'erreur, rollback
-        return jsonify({'error': str(e)}), 500
+        return ErrorHandler.handle_error(e, 'Failed to delete report', 500)
     finally:
         DatabaseConnection.get_instance().close_session(db)
