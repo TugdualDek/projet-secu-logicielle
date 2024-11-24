@@ -1,0 +1,16 @@
+name: least_privilege_violation_workflow
+description: Least privilege violation checking
+steps:
+  - module: user_login  
+    params: 
+      username: "user_limited" 
+      password: "password_limited" 
+  - module: access_sensitive_resource 
+    params:
+      resource_url: "http://evil.com/admin"
+      expected_result: "denied" 
+  - module: report_violation
+    params:
+      violation_type: "least_privilege"
+      username: "user_limited"
+      resource_url: "http://evil.com/admin"
