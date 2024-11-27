@@ -1,3 +1,4 @@
+from base_module import BaseModule
 import requests
 
 def send_malicious_request(session, vulnerable_url, attack_parameter, attack_value):
