@@ -1,3 +1,5 @@
+from base_module import BaseModule
+
 def generate_csrf_poc(vulnerable_url, attack_parameter, attack_value):
   poc_html = f"""
   <html>
