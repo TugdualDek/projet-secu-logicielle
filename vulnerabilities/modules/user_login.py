@@ -1,3 +1,4 @@
+from base_module import BaseModule
 import requests
 
 def user_login(username, password):
