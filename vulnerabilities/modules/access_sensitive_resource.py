@@ -1,3 +1,4 @@
+from base_module import BaseModule
 import requests
 
 def access_sensitive_resource(session, resource_url, expected_result):
