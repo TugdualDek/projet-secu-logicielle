@@ -18,11 +18,11 @@ services:
 
   scanner:
     build: .
-    #command: ["waitress-serve", "--host=0.0.0.0", "--port=5000", "server:app"]
-    command: ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+    command: ["waitress-serve", "--host=0.0.0.0", "--port=5000", "server:app"]
+    #command: ["flask", "run", "--host=0.0.0.0", "--port=5000"]
     restart: always
     ports:
-      - "5001:5000"
+      - "5000:5000"
     depends_on:
       - db
       - redis
