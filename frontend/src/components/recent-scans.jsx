@@ -25,8 +25,12 @@ export default function RecentScans() {
     try {
       const data = await scanService.getAllScans();
       setScans(data);
-      // Vérifie s'il y a des scans en cours
-      setHasInProgress(data.some((scan) => scan.status === "in_progress"));
+      // Vérifie s'il y a des scans en cours ou  en attent
+      setHasInProgress(
+        data.some(
+          (scan) => scan.status === "in_progress" || scan.status === "pending"
+        )
+      );
     } catch (err) {
       setError(err.message);
     } finally {
@@ -41,17 +45,17 @@ export default function RecentScans() {
       fetchScans();
       setHasInProgress(true);
     };
-    window.addEventListener('scanCreated', handleScanCreated);
+    window.addEventListener("scanCreated", handleScanCreated);
 
     const intervalId = setInterval(() => {
       if (hasInProgress) {
         fetchScans();
       }
-    }, 2000);
+    }, 5000);
 
     return () => {
       clearInterval(intervalId);
-      window.removeEventListener('scanCreated', handleScanCreated);
+      window.removeEventListener("scanCreated", handleScanCreated);
     };
   }, [hasInProgress]);
 
@@ -87,9 +91,9 @@ export default function RecentScans() {
                   <Badge
                     variant={
                       scan.status === "completed"
-                        ? "success"
+                        ? "outline"
                         : scan.status === "in_progress"
-                        ? "warning"
+                        ? ""
                         : scan.status === "failed"
                         ? "destructive"
                         : "secondary"
