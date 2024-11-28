@@ -3,6 +3,12 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { scanService } from "@/services/api";
 
 function ScanDetails() {
@@ -88,9 +94,20 @@ function ScanDetails() {
             </p>
             <div>
               <h4>Détails :</h4>
-              <pre className="p-4 rounded">
-                {JSON.stringify(JSON.parse(vulnerability.description), null, 2)}
-              </pre>
+              <Accordion type="single" collapsible>
+                <AccordionItem value={`item-${index}`}>
+                  <AccordionTrigger>Voir les détails</AccordionTrigger>
+                  <AccordionContent>
+                    <pre className="p-4 rounded">
+                      {JSON.stringify(
+                        JSON.parse(vulnerability.description),
+                        null,
+                        2
+                      )}
+                    </pre>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
           </div>
         ))}
