@@ -84,11 +84,5 @@ class Module(BaseModule):
         Cette fonction doit être adaptée en fonction de l'application cible
         et des signatures de réponse attendues.
         """
-        # Vérifier si le payload apparaît dans la réponse
-        indicators = [
-            response.elapsed.total_seconds() > self.timeout_threshold,
-            response.status_code in [200, 301, 302],
-            self.check_response_patterns(response.text),
-            payload in response.text
-        ]
-        return any(indicators)
+        return payload in response.text
+    

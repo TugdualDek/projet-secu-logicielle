@@ -1,17 +1,26 @@
 "use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { scanService } from '@/services/api';
 
 export default function NewScanForm() {
   const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Lancement d'un scan pour:", url);
-    setUrl("");
+    setLoading(true);
+    try {
+      await scanService.createScan(url);
+      window.dispatchEvent(new Event('scanCreated'));
+    } catch (error) {
+      console.error('Erreur lors de la création du scan:', error);
+    } finally {
+      setLoading(false);
+      setUrl("");
+    }
   };
 
   return (
@@ -33,8 +42,9 @@ export default function NewScanForm() {
       <Button
         type="submit"
         className="w-full bg-green-500 hover:bg-green-600 text-white text-sm md:text-lg"
+        disabled={loading}
       >
-        Lancer le Scan
+        {loading ? 'Création...' : 'Lancer le scan'}
       </Button>
     </form>
   );
