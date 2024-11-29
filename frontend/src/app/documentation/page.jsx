@@ -1,6 +1,9 @@
+import React from "react";
+import { Card } from "@/components/ui/card";
+
 export default function DocumentationPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <Card className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg border-none shadow-xl">
       <main className="container mx-auto p-4">
         <h1 className="text-3xl font-bold mb-6">Documentation du Scanner</h1>
         <div className="space-y-6">
@@ -84,6 +87,6 @@ export default function DocumentationPage() {
           </section>
         </div>
       </main>
-    </div>
+    </Card>
   );
 }

@@ -20,57 +20,66 @@ class Module(BaseModule):
         if not endpoints:
             return context
 
+        # Ensemble pour suivre les endpoints vulnérables
+        vulnerable_endpoints = set()
+
+        # Regrouper les endpoints par URL
+        url_endpoints = {}
         for endpoint in endpoints:
             url = endpoint['url']
-            method = endpoint.get('method', 'get').lower()
-            param_name = endpoint.get('param_name')
-            params = endpoint.get('params', {})
-            original_params = params.copy()
+            url_endpoints.setdefault(url, []).append(endpoint)
 
-            for payload in test_payloads:
-                if param_name:
-                    params[param_name] = payload
-                else:
-                    # Si aucun paramètre spécifique, on saute ce endpoint
-                    continue
+        for url, endpoint_list in url_endpoints.items():
+            # Si l'URL est déjà marquée comme vulnérable, passer au suivant
+            if url in vulnerable_endpoints:
+                continue
 
-                try:
-                    if method == 'get':
-                        response = requests.get(url, params=params, timeout=10)
-                    elif method == 'post':
-                        response = requests.post(url, data=params, timeout=10)
+            for endpoint in endpoint_list:
+                method = endpoint.get('method', 'get').lower()
+                param_name = endpoint.get('param_name')
+                params = endpoint.get('params', {})
+                original_params = params.copy()
+
+                is_vulnerable = False  # Indicateur de vulnérabilité pour cet endpoint
+
+                for payload in test_payloads:
+                    if param_name:
+                        params[param_name] = payload
                     else:
+                        # Si aucun paramètre spécifique, on saute ce endpoint
                         continue
 
-                    # Analyser la réponse pour détecter une éventuelle vulnérabilité
-                    if self.is_ssrf_vulnerable(response, payload):
-                        ssrf_results.append({
-                            'url': url,
-                            'method': method,
-                            'payload': payload,
-                            'params': params.copy(),
-                            'vulnerable': True
-                        })
-                    else:
-                        ssrf_results.append({
-                            'url': url,
-                            'method': method,
-                            'payload': payload,
-                            'params': params.copy(),
-                            'vulnerable': False
-                        })
+                    try:
+                        if method == 'get':
+                            response = requests.get(url, params=params, timeout=10)
+                        elif method == 'post':
+                            response = requests.post(url, data=params, timeout=10)
+                        else:
+                            continue
 
-                except requests.RequestException as e:
-                    ssrf_results.append({
-                        'url': url,
-                        'method': method,
-                        'payload': payload,
-                        'params': params.copy(),
-                        'error': f"Erreur lors de la requête : {e}"
-                    })
+                        # Analyser la réponse pour détecter une éventuelle vulnérabilité
+                        if self.is_ssrf_vulnerable(response, payload):
+                            ssrf_results.append({
+                                'url': url,
+                                'method': method,
+                                'payload': payload,
+                                'params': params.copy(),
+                                'vulnerable': True
+                            })
+                            vulnerable_endpoints.add(url)
+                            is_vulnerable = True
+                            break  # Arrêter les tests de payloads pour ce endpoint
+                        else:
+                            continue  # Passer au prochain payload
 
-                # Réinitialiser les paramètres pour le prochain test
-                params = original_params.copy()
+                    except requests.RequestException as e:
+                        continue  # Ignorer les erreurs de requête
+
+                    # Réinitialiser les paramètres pour le prochain test
+                    params = original_params.copy()
+
+                if is_vulnerable:
+                    break  # Arrêter de tester d'autres endpoints pour cette URL
 
         module_results.append({
             'SSRF Test': ssrf_results
@@ -85,4 +94,3 @@ class Module(BaseModule):
         et des signatures de réponse attendues.
         """
         return payload in response.text
-    

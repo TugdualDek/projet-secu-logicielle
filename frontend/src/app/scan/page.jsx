@@ -71,9 +71,9 @@ function ScanDetails() {
   return (
     <Card className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg border-none shadow-xl">
       <CardHeader>
-        <CardTitle>{scan.target}</CardTitle>
+        <CardTitle className="text-white">Cible : {scan.target}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 text-white">
         <div>
           <span>Statut: {scan.status}</span>
         </div>
@@ -85,7 +85,10 @@ function ScanDetails() {
         </div>
         {report.map((vulnerability, index) => (
           <div key={index} className="vulnerability-card">
-            <h3>{vulnerability.vulnerability_name}</h3>
+            <h3>
+              <strong>Vulnérabilité :</strong>{" "}
+              {vulnerability.vulnerability_name}
+            </h3>
             <p>
               <strong>Type :</strong> {vulnerability.vulnerability_type}
             </p>
@@ -93,7 +96,6 @@ function ScanDetails() {
               <strong>Date :</strong> {vulnerability.created_at}
             </p>
             <div>
-              <h4>Détails :</h4>
               <Accordion type="single" collapsible>
                 <AccordionItem value={`item-${index}`}>
                   <AccordionTrigger>Voir les détails</AccordionTrigger>

@@ -31,10 +31,19 @@ class Module(BaseModule):
             try:
                 response = requests.get(url, timeout=5)
                 content_type = response.headers.get('Content-Type', '')
-                if 'text/html' not in content_type:
+        
+                # Vérifier le code de statut HTTP
+                if response.status_code != 200:
+                    print(f"Skipping URL {url} due to status code {response.status_code}")
+                    return
+        
+                # Vérifier le type de contenu
+                if not content_type.startswith('text/html'):
+                    print(f"Ignoring non-HTML content at {url}")
                     return  # Ignorer les ressources non HTML
-
-                soup = BeautifulSoup(response.content, 'html.parser')
+        
+                # Utiliser response.text au lieu de response.content
+                soup = BeautifulSoup(response.text, 'html.parser')
 
                 # Extraire et traiter les formulaires
                 forms = soup.find_all('form')
