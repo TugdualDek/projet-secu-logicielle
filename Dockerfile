@@ -44,8 +44,6 @@ COPY --chown=scanner:scanner backend/ ./backend
 # Copier les fichiers build de React avec les bonnes permissions
 COPY --chown=scanner:scanner --from=build-react /app/frontend/build ./frontend/build
 
-COPY --chown=scanner:scanner vulnerabilities/ ./vulnerabilities
-
 # Copier le fichier server.py
 COPY --chown=scanner:scanner server.py .
 

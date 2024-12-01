@@ -9,7 +9,30 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { scanService } from "@/services/api";
+
+function findVulnerableField(data) {
+  if (typeof data !== "object" || data === null) {
+    return undefined;
+  }
+
+  if (data.hasOwnProperty("vulnerable")) {
+    return data.vulnerable;
+  }
+
+  for (let key in data) {
+    if (data.hasOwnProperty(key)) {
+      const value = data[key];
+      const result = findVulnerableField(value);
+      if (typeof result !== "undefined") {
+        return result;
+      }
+    }
+  }
+
+  return undefined;
+}
 
 function ScanDetails() {
   const searchParams = useSearchParams();
@@ -75,7 +98,9 @@ function ScanDetails() {
       </CardHeader>
       <CardContent className="space-y-4 text-white">
         <div>
-          <span>Statut: {scan.status}</span>
+          <span>
+            Statut: {scan.status === "completed" ? "Terminé" : "En cours"}
+          </span>
         </div>
         <div>
           <span>Date de début: {scan.created_at}</span>
@@ -83,36 +108,49 @@ function ScanDetails() {
         <div>
           <span>Date de fin: {scan.completed_at}</span>
         </div>
-        {report.map((vulnerability, index) => (
-          <div key={index} className="vulnerability-card">
-            <h3>
-              <strong>Vulnérabilité :</strong>{" "}
-              {vulnerability.vulnerability_name}
-            </h3>
-            <p>
-              <strong>Type :</strong> {vulnerability.vulnerability_type}
-            </p>
-            <p>
-              <strong>Date :</strong> {vulnerability.created_at}
-            </p>
-            <div>
-              <Accordion type="single" collapsible>
-                <AccordionItem value={`item-${index}`}>
-                  <AccordionTrigger>Voir les détails</AccordionTrigger>
-                  <AccordionContent>
-                    <pre className="p-4 rounded">
-                      {JSON.stringify(
-                        JSON.parse(vulnerability.description),
-                        null,
-                        2
-                      )}
-                    </pre>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+        {report.map((vulnerability, index) => {
+          let descriptionData = {};
+          try {
+            descriptionData = JSON.parse(vulnerability.description);
+          } catch (error) {
+            console.error(
+              "Erreur lors de l'analyse de la description :",
+              error
+            );
+          }
+
+          const isVulnerable = findVulnerableField(descriptionData);
+
+          return (
+            <div key={index} className="vulnerability-card">
+              <h3>
+                <strong>Vulnérabilité :</strong>{" "}
+                {vulnerability.vulnerability_name}
+              </h3>
+              <p>
+                <strong>Type :</strong> {vulnerability.vulnerability_type}
+              </p>
+              {isVulnerable === true && (
+                <Badge variant="destructive">Vulnérabilité potentielle</Badge>
+              )}
+              {isVulnerable === false && (
+                <Badge variant="secondary">Vulnérabilité non identifiée</Badge>
+              )}
+              <div>
+                <Accordion type="single" collapsible>
+                  <AccordionItem value={`item-${index}`}>
+                    <AccordionTrigger>Voir les détails</AccordionTrigger>
+                    <AccordionContent>
+                      <pre className="p-4 rounded">
+                        {JSON.stringify(descriptionData, null, 2)}
+                      </pre>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </CardContent>
     </Card>
   );

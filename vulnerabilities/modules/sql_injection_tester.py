@@ -34,7 +34,7 @@ class Module:
                 method = vector.get('method', 'get')
                 params = vector.get('params')
                 data = vector.get('data')
-                payload = params or data  # Le payload injecté
+                payload = params or data 
 
                 print(f"Testing {method.upper()} {url} with payload {payload}")
 
@@ -45,7 +45,7 @@ class Module:
                     elif method == 'post':
                         response = requests.post(url, data=data, timeout=10)
                     else:
-                        continue  # Méthode non supportée
+                        continue 
 
                     # Analyse de la réponse pour détecter des signatures d'erreur
                     for signature in error_signatures:
@@ -67,15 +67,17 @@ class Module:
                         break
 
                 except requests.RequestException as e:
-                    # En cas d'erreur de requête, ajouter l'erreur aux résultats
-                    error_result = {
-                        'url': url,
-                        'method': method.upper(),
-                        'payload': payload,
-                        'error': str(e)
-                    }
-                    module_results.append(error_result)
-                    # Vous pouvez décider d'arrêter les tests sur cette URL en cas d'erreur critique
+                    continue
+
+        if len(module_results) >= 1:
+            module_results.append({
+                'vulnerable': True
+            })
+        else:
+            module_results.append({
+                'message': 'No SQL injection vulnerabilities detected',
+                'vulnerable': False
+            })
 
         # Stocker les résultats dans le contexte
         context['module_results'] = module_results

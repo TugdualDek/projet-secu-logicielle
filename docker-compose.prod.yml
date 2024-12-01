@@ -30,6 +30,8 @@ services:
       - .env
     environment:
       - PYTHONPATH=/app
+    volumes:
+      - ./vulnerabilities:/app/vulnerabilities
 
   worker:
     build: .
@@ -39,3 +41,5 @@ services:
       - redis
     env_file:
       - .env
+    volumes:
+      - ./vulnerabilities:/app/vulnerabilities

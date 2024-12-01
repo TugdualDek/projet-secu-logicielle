@@ -106,7 +106,8 @@ class Module(BaseModule):
         if not discovered_endpoints:
             module_results.append({
                 'Endpoint Discovery': {
-                    'message': 'Aucun endpoint découvert'
+                    'message': 'Aucun endpoint découvert',
+                    'vulnerable': False
                 }
             })
 

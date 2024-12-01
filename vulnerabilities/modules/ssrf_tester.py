@@ -81,9 +81,18 @@ class Module(BaseModule):
                 if is_vulnerable:
                     break  # Arrêter de tester d'autres endpoints pour cette URL
 
-        module_results.append({
-            'SSRF Test': ssrf_results
-        })
+
+        if len(module_results) >= 1:
+            module_results.append(
+                ssrf_results,
+                {
+                'vulnerable': True
+            })
+        else:
+            module_results.append({
+                'message': 'No SSRF vulnerabilities detected',
+                'vulnerable': False
+            })
 
         return context
 
