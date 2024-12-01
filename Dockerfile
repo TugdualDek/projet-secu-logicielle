@@ -12,6 +12,8 @@ RUN npm install
 # Copier le reste de l'application React
 COPY frontend/ ./
 
+ENV NEXT_TELEMETRY_DISABLED=1
+
 # Construire l'application React
 RUN npm run build
 
@@ -25,21 +27,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Créer un utilisateur non-root
+RUN groupadd -r scanner && useradd -r -g scanner scanner
+
+# Créer et configurer le répertoire de l'application
 WORKDIR /app
+RUN chown scanner:scanner /app
 
 # Copier le fichier requirements.txt et installer les dépendances
-COPY requirements.txt .
+COPY --chown=scanner:scanner requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier le contenu du backend
-COPY backend/ ./backend
+# Copier le contenu du backend avec les bonnes permissions
+COPY --chown=scanner:scanner backend/ ./backend
 
-# Copier les fichiers build de React - Correction du chemin
-COPY --from=build-react /app/frontend/build ./frontend/build
-
-COPY vulnerabilities/ ./vulnerabilities
+# Copier les fichiers build de React avec les bonnes permissions
+COPY --chown=scanner:scanner --from=build-react /app/frontend/build ./frontend/build
 
 # Copier le fichier server.py
-COPY server.py .
+COPY --chown=scanner:scanner server.py .
+
+# Changer vers l'utilisateur non-root
+USER scanner
 
 EXPOSE 5000

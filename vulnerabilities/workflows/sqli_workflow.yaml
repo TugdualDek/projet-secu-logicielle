@@ -1,0 +1,23 @@
+name: sql_injection_test_workflow
+description: Détection des vulnérabilités d'injection SQL sur les points d'entrée de l'application
+steps:
+  - module: web_crawler
+    params:
+      url: "{{ target }}"
+      max_depth: 4
+      delay: 0.5
+  - module: injection_vector_builder
+    params:
+      urls: "{{ crawled_urls }}"
+      forms: "{{ discovered_forms }}"
+      sql_payloads:
+        - "' OR '1'='1"
+        - "'; DROP TABLE users; --"
+        - "' OR sleep(5)#"
+  - module: sql_injection_tester
+    params:
+      injection_vectors: "{{ injection_vectors }}"
+  - module: results_saver
+    params:
+      vulnerability_type: "injection"
+      vulnerability_name: "SQL Injection"

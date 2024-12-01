@@ -1,0 +1,19 @@
+name: ssrf_test_workflow
+description: Vérification des vulnérabilités SSRF sur les points d'entrée de l'application
+steps:
+  - module: endpoint_discoverer
+    params:
+      url: "{{ target }}"
+      max_depth: 2
+      delay: 0.3
+  - module: ssrf_tester
+    params:
+      endpoints: "{{ discovered_endpoints }}"
+      test_payloads:
+        - "http://169.254.169.254/latest/meta-data/"
+        - "http://127.0.0.1/"
+        - "http://localhost/"
+  - module: results_saver
+    params:
+      vulnerability_type: "ssrf"
+      vulnerability_name: "Server-Side Request Forgery"

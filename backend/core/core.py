@@ -12,23 +12,29 @@ def substitute_variables(value, context, pattern):
     """
     if isinstance(value, str):
         matches = pattern.findall(value)
-        for var in matches:
-            # Gérer les clés imbriquées
-            keys = var.split('.')
-            temp = context
-            for key in keys:
-                if key in temp:
-                    temp = temp[key]
+        if matches:
+            for var in matches:
+                # Gérer les clés imbriquées
+                keys = var.split('.')
+                temp = context
+                for key in keys:
+                    if key in temp:
+                        temp = temp[key]
+                    else:
+                        raise Exception(f"Variable {var} non trouvée dans le contexte")
+                # Si temp n'est pas une chaîne, remplacer entièrement value par temp
+                if not isinstance(temp, str):
+                    value = temp
                 else:
-                    raise Exception(f"Variable {var} non trouvée dans le contexte")
-            value = re.sub(r'\{\{\s*' + var + r'\s*\}\}', str(temp), value)
-        return value
+                    value = re.sub(r'\{\{\s*' + var + r'\s*\}\}', temp, value)
+            return value
+        else:
+            return value
     elif isinstance(value, list):
         return [substitute_variables(item, context, pattern) for item in value]
     elif isinstance(value, dict):
         return {k: substitute_variables(v, context, pattern) for k, v in value.items()}
     else:
-        # Pour les autres types (int, float, bool, etc.), on retourne la valeur telle quelle
         return value
 
 class Core:
@@ -51,7 +57,7 @@ class Core:
         workflow_order = resolve_workflow_order()
 
         for workflow_name in workflow_order:
-            print(f"Exécution du workflow: {workflow_name}")
+            print(f"----- Exécution du workflow: {workflow_name} -----")
             workflow_context = context.copy()
             workflow_results = self.execute_workflow(workflow_name, workflow_context)
 
@@ -86,7 +92,7 @@ class Core:
             # Mettre à jour le contexte avec les paramètres substitués
             context.update(substituted_params)
 
-            print(f"Exécution du module: {module_name}")
+            print(f"----- Exécution du module: {module_name} -----")
             print(f"Contexte: {context}")
 
             module = self.modules.get(module_name)
@@ -95,7 +101,7 @@ class Core:
             else:
                 raise Exception(f"Module {module_name} non trouvé")
 
-            print(f"Contexte après exécution: {context}")
+            #print(f"Contexte après exécution: {context}")
 
         return context.get('results', {})
     

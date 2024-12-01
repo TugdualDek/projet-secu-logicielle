@@ -61,3 +61,22 @@ def delete_report(report_id):
         return ErrorHandler.handle_error(e, 'Failed to delete report', 500)
     finally:
         DatabaseConnection.get_instance().close_session(db)
+
+# Route pour récuperer tous les rapports depuis un scan id
+@reports_bp.route('/scan/<int:scan_id>', methods=['GET'])
+def get_reports_by_scan(scan_id):
+    """
+    get_reports_by_scan Récupère tous les rapports par scan ID
+    :param scan_id: ID du scan
+    :return: Liste de rapports
+    """
+    db = DatabaseConnection.get_instance().get_session()
+    try:
+        reports = db.query(Report).filter_by(scan_id=scan_id).all()
+        return jsonify([report.to_dict() for report in reports]), 200
+    except Exception as e:
+        db.rollback()
+        return ErrorHandler.handle_error(e, 'Failed to retrieve reports', 500)
+    finally:
+        DatabaseConnection.get_instance().close_session(db)
+        
