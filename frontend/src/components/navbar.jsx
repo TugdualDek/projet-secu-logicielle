@@ -54,14 +54,14 @@ function NavLinks() {
     <>
       <NavLink href="/" icon={<Home className="h-5 w-5" />} text="Accueil" />
       <NavLink
-        href="/scans"
-        icon={<List className="h-5 w-5" />}
-        text="Historique"
-      />
-      <NavLink
         href="/documentation"
         icon={<FileText className="h-5 w-5" />}
         text="Documentation"
+      />
+      <NavLink
+        href="https://github.com/TugdualDek/projet-secu-logicielle"
+        icon={<List className="h-5 w-5" />}
+        text="Code source"
       />
     </>
   );
