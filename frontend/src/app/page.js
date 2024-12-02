@@ -1,42 +1,24 @@
-import { Suspense } from "react";
-import NewScanForm from "../components/new-scan-form";
-import RecentScans from "../components/recent-scans";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Activity, Shield } from 'lucide-react';
 
-export default function HomePage() {
+import GradientBackground from '@/components/gradient-background';
+
+export default function Home() {
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl md:text-5xl font-bold text-center mb-8 md:mb-12 text-white">
-        Scanner de Vulnérabilités Web
-      </h1>
-      <Card className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg border-none shadow-xl">
-        <CardHeader>
-          <CardTitle className="text-2xl md:text-3xl font-semibold text-white">
-            Nouveau Scan
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <NewScanForm />
-        </CardContent>
-      </Card>
-      <Card className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg border-none shadow-xl">
-        <CardHeader>
-          <CardTitle className="text-2xl md:text-3xl font-semibold text-white">
-            Historique des Scans
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Suspense
-            fallback={
-              <div className="text-center text-white">
-                Chargement de l&apos;historique des scans...
-              </div>
-            }
-          >
-            <RecentScans />
-          </Suspense>
-        </CardContent>
-      </Card>
+    <div className='w-full h-screen relative overflow-hidden'>
+      <div className="h-full flex flex-1 flex-col items-center justify-center gap-5">
+        <div className='h-16 w-16 flex items-center justify-center bg-white/15 backdrop-blur-md rounded-full text-[#6E3CEC]'>
+          <Shield size={36}  />
+        </div>
+        <h1 className="text-5xl font-bold text-white">Discover how secure your website is</h1>
+        <p className="text-2xl font-medium text-neutral-500">Test the vulnerabilities in matter of seconds,<br/>avoid potential risks threats on your company.</p>
+        <div className="flex flex-row items-center bg-white/15 p-2 rounded-full mt-8">
+          <input type="text" placeholder="Enter your URL" className="w-64 bg-transparent outline-none px-2" />
+          <button className="h-10 w-10 flex items-center justify-center rounded-full text-black bg-white">
+            <Activity size={18} />
+          </button>
+        </div>
+      </div>
+      <GradientBackground />
     </div>
   );
 }
