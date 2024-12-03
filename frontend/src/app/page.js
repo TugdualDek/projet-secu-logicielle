@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Activity, Shield } from 'lucide-react';
+import { Shield } from 'lucide-react';
 
 import GradientBackground from '@/components/gradient-background';
+import SearchInput from '@/components/search-input';
+
 
 export default function Home() {
 	const [scrolling, setScrolling] = useState(false);
@@ -63,19 +65,7 @@ export default function Home() {
 						avoid potential risks threats on your company.
 					</p>
 
-					<div className="flex flex-row items-center bg-white/10 p-2 rounded-full border border-white/15 mt-8">
-						<input
-							type="text"
-							placeholder="Enter your URL"
-							className="w-64 bg-transparent outline-none px-2"
-						/>
-						<button
-							onClick={handleClick}
-							className="h-10 w-10 flex items-center justify-center rounded-full text-black bg-white"
-						>
-							<Activity size={18} />
-						</button>
-					</div>
+					<SearchInput onClick={handleClick} />
 				</div>
 				
 				<div className='pb-12'>Made with ❤️ by</div>
