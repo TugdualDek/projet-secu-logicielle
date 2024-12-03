@@ -4,7 +4,7 @@ import GradientBackground from '@/components/gradient-background';
 
 export default function Home() {
 	return (
-		<div className='w-full h-screen relative overflow-hidden'>
+		<div className='w-full h-screen relative'>
 			<div className="absolute z-20 w-full h-full flex flex-1 flex-col items-center justify-center gap-5">
 				<div className='h-16 w-16 flex items-center justify-center bg-white/15 backdrop-blur-md rounded-full border border-white/15 text-[#6E3CEC]'>
 					<Shield size={36}  />
@@ -17,6 +17,9 @@ export default function Home() {
 					<button className="h-10 w-10 flex items-center justify-center rounded-full text-black bg-white">
 						<Activity size={18} />
 					</button>
+				</div>
+				<div>
+					Made with ❤️ by
 				</div>
 			</div>
 			<GradientBackground />
