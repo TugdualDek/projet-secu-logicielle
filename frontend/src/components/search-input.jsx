@@ -2,7 +2,7 @@ import { Activity } from 'lucide-react';
 
 const SearchInput = ({ onClick }) => {
     return (
-        <div className="flex flex-row items-center bg-white/10 p-2 rounded-full border border-white/15 mt-8">
+        <div className="sticky top-0 flex flex-row items-center bg-white/10 p-2 rounded-full border border-white/15 mt-8">
             <input
                 type="text"
                 placeholder="Enter your URL"
