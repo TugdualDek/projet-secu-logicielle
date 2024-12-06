@@ -1,4 +1,5 @@
 async-timeout==5.0.1
+beautifulsoup4==4.12.3
 blinker==1.8.2
 certifi==2024.8.30
 charset-normalizer==3.4.0
@@ -15,6 +16,7 @@ PyYAML==6.0.2
 redis==5.2.0
 requests==2.32.3
 rq==2.0.0
+soupsieve==2.6
 SQLAlchemy==2.0.36
 typing_extensions==4.12.2
 urllib3==2.2.3
