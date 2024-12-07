@@ -1,0 +1,17 @@
+name: brute_force_workflow
+description: Test de vulnérabilité aux attaques par force brute sur l'API d'authentification
+steps:
+  - module: brute_force_tester
+    params:
+      url: "{{ target }}"
+      method: "post"
+      content_type: "application/json"
+      usernames: ["a@aa", "admin@test.com", "user@example.com"]
+      passwords: ["a", "password123", "admin123"]
+      success_status: 200
+      max_attempts: 5
+      delay: 1
+  - module: results_saver
+    params:
+      vulnerability_type: "authentication"
+      vulnerability_name: "Brute Force Vulnerability"
