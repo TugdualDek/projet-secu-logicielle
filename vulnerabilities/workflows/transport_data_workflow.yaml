@@ -1,0 +1,18 @@
+name: password_workflow
+description: Vérification de la longueur et de la complexité du mot de passe
+steps:
+  - module: http_request
+    params:
+      url: "{{ target }}"
+      timeout: 10
+
+  - module: ssl_config
+    params:
+      hostname : "{{ target }}"
+      port : 443
+
+  - module: results_saver
+    params:
+      vulnerability_type: "transport_data_security"
+      vulnerability_name: "Transport of sensitive data"
+
