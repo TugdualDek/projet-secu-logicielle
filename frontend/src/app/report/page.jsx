@@ -94,7 +94,7 @@ const Report = () => {
 						<h2 className="text-white text-2xl font-semibold mt-2">
 							{item.title}
 						</h2>
-						<p className="text-[#83848E] text-sm">
+						<p className="text-foreground-secondary text-sm">
 							{item.subtitle}
 						</p>
 
