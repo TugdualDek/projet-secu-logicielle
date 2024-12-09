@@ -1,17 +1,21 @@
-name: brute_force_workflow
-description: Test de vulnérabilité aux attaques par force brute sur l'API d'authentification
+name: brute_force_with_discovery_workflow
+description: Test de vulnérabilité par force brute en découvrant automatiquement le formulaire de login
 steps:
+  - module: endpoint_discoverer
+    params:
+      url: "{{ target }}"
+      max_depth: 3
+      delay: 1
+
+  - module: endpoint_selector
+
   - module: brute_force_tester
     params:
-      url: "{{ target }}"  # Spécifier explicitement le chemin de login
-      method: "post"
-      content_type: "application/x-www-form-urlencoded"  # Important pour Flask
-      username_field: "email"
-      password_field: "password"
-      usernames: ["test@example.com","tired@tired.com", "admin@test.com"]
-      passwords: ["passwo23","12345678", "admin123"]
+      usernames: ["test@example.com", "tired@tired.com", "admin@test.com"]
+      passwords: ["passwo23", "123456789", "admin123"]
       max_attempts: 20
       delay: 1
+
   - module: results_saver
     params:
       vulnerability_type: "authentication"
