@@ -57,15 +57,19 @@ const accordionData = [
 ];
 
 const Report = () => {
-	const [openAccordion, setOpenAccordion] = useState(null);
+	const [openAccordions, setOpenAccordions] = useState([]);
 
 	const toggleAccordion = (id) => {
-		setOpenAccordion(openAccordion === id ? null : id);
+		// Toggle the accordion's ID in the array
+		setOpenAccordions((prev) =>
+			prev.includes(id) ? prev.filter((accordionId) => accordionId !== id) : [...prev, id]
+		);
 	};
 
 	return (
 		<div className='w-full max-w-[1200px] mx-auto min-h-screen flex flex-col items-center pt-[25vh] px-4 pb-4 gap-2'>
 			
+			{/* Alert Header */}
 			<div className="h-16 w-16 flex items-center justify-center bg-red/15 backdrop-blur-md rounded-full border border-white/15">
 				<ShieldAlert size={36} className='text-red' />
 				<ShieldCheck size={36} className='text-green hidden'/>
@@ -84,7 +88,7 @@ const Report = () => {
 			{/* Accordion Grid */}
 			<div className="grid grid-cols-3 gap-2 mt-16 w-full px-6">
 				{accordionData.map((item) => {
-					const isOpen = openAccordion === item.id;
+					const isOpen = openAccordions.includes(item.id);
 
 					return (
 						<div
@@ -124,7 +128,6 @@ const Report = () => {
 										{item.description}
 									</p>
 								)}
-								
 							</div>
 						</div>
 					);
