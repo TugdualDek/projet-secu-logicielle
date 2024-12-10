@@ -1,14 +1,13 @@
-import requests
+
 import socket
 import ssl
+from abc import abstractmethod
+from base_module import BaseModule
 
-class TransportVulnerabilityScanner:
+class Module(BaseModule):
+    @abstractmethod
+    def analyze_ssl_configuration(self, hostname, port=443):
 
-    @staticmethod
-    def analyze_ssl_configuration(hostname, port=443):
-        """
-        Analyse la configuration SSL/TLS
-        """
         try:
             context = ssl.create_default_context()
             with socket.create_connection((hostname, port)) as sock:
@@ -19,13 +18,13 @@ class TransportVulnerabilityScanner:
                     import datetime
                     expiry = datetime.datetime.strptime(cert['notAfter'], '%b %d %H:%M:%S %Y %Z')
                     if expiry < datetime.datetime.now():
-                        print("⚠️ Certificat SSL expiré")
+                        print("Certificat SSL expiré")
 
                     # Vérification des protocoles faibles
                     protocols = secure_sock.version()
                     weak_protocols = ['SSLv2', 'SSLv3', 'TLSv1.0']
                     if any(proto in protocols for proto in weak_protocols):
-                        print(f"⚠️ Protocole faible détecté : {protocols}")
+                        print(f"Protocole faible détecté : {protocols}")
 
         except ssl.SSLError as e:
             print(f"Erreur SSL : {e}")

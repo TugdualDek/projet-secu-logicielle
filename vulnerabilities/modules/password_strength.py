@@ -1,8 +1,10 @@
+from abc import abstractmethod
+from base_module import BaseModule
 import zxcvbn
 
-class PasswordVulnerabilityScanner:
-    @staticmethod
-    def estimate_password_strength(password: str):
+class Module(BaseModule):
+    @abstractmethod
+    def estimate_password_strength(self, password: str):
         result = zxcvbn.zxcvbn(password)
         score = result.get('score', 0)  # 0-4, 4 étant le plus fort
         if score < 2:

@@ -1,15 +1,17 @@
+from abc import abstractmethod
+from bs4 import BeautifulSoup
+from base_module import BaseModule
 import requests
 import urllib.parse
-from bs4 import BeautifulSoup
 
-class InformationLeakScanner:
-    @staticmethod
-    def detect_directory_listing(base_url):
+class Module(BaseModule):
+    @abstractmethod
+    def detect_directory_listing(self, base_url):
 
         try:
             response = requests.get(base_url, allow_redirects=False)
             if 'Index of' in response.text or 'directory listing' in response.text.lower():
-                print(f"⚠️ Liste de répertoires potentiellement exposée : {base_url}")
+                print(f"Liste de répertoires potentiellement exposée : {base_url}")
 
                 # Extraction des liens
                 soup = BeautifulSoup(response.text, 'html.parser')

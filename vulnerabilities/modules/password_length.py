@@ -1,8 +1,10 @@
 import re
+from abc import abstractmethod
+from base_module import BaseModule
 
-class PasswordVulnerabilityScanner:
-    @staticmethod
-    def check_password_complexity(password):
+class Module(BaseModule):
+    @abstractmethod
+    def check_password_complexity(self, password):
         if len(password) < 12:
             print("Mot de passe trop court")
             return False

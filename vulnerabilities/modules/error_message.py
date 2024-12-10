@@ -1,9 +1,11 @@
+from abc import abstractmethod
+from base_module import BaseModule
 import requests
 import re
 
-class InformationLeakScanner:
-    @staticmethod
-    def scan_error_messages(url):
+class Module(BaseModule):
+    @abstractmethod
+    def scan_error_messages(self,url):
         sensitive_patterns = [
             r'database error',
             r'SQL syntax',

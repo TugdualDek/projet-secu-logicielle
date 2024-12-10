@@ -1,10 +1,12 @@
+from abc import abstractmethod
 import requests
 from bs4 import BeautifulSoup
+from base_module import BaseModule
 
-class InformationLeakScanner:
+class Module(BaseModule):
 
-    @staticmethod
-    def extract_metadata(url):
+    @abstractmethod
+    def extract_metadata(self, url):
         try:
             response = requests.get(url)
 

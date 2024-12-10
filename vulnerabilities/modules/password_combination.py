@@ -1,9 +1,11 @@
 import itertools
 import string
+from abc import abstractmethod
+from base_module import BaseModule
 
-class PasswordVulnerabilityScanner:
-    @staticmethod
-    def generate_password_combinations(base_word: str, max_length: int = 8):
+class Module(BaseModule):
+    @abstractmethod
+    def generate_password_combinations(self, base_word: str, max_length: int = 8):
         chars = string.ascii_letters + string.digits + string.punctuation
         variations = [
             base_word,
