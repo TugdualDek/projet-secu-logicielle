@@ -11,9 +11,9 @@ const badgeVariants = {
 const Badge = ({ variant = "noVulnerability", children }) => {
     return (
         <span
-        className={`text-xs font-medium capitalize py-1 px-2 rounded-lg ${badgeVariants[variant]}`}
+            className={`text-xs font-medium capitalize italic py-1 px-2 rounded-lg ${badgeVariants[variant]}`}
         >
-        {children}
+            {children}
         </span>
     );
 };

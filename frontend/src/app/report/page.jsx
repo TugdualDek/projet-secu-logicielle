@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import SearchInput from '@/components/search-input';
 import { ShieldAlert, ShieldCheck, ChevronDown } from 'lucide-react';
+
+import SearchInput from '@/components/search-input';
+import Badge from "@/components/badge";
+
 
 const accordionData = [
 	{
@@ -21,14 +24,14 @@ const accordionData = [
 	},
 	{
 		id: 3,
-		badge: "No vulnerability",
+		badge: "1 Medium",
 		title: "Injection",
 		subtitle: "Security subtitle quickly describing",
 		description: "No issues detected for Injection vulnerabilities.",
 	},
 	{
 		id: 4,
-		badge: "No vulnerability",
+		badge: "1 Low",
 		title: "Name 4",
 		subtitle: "Security subtitle quickly describing",
 		description: "No issues detected for Injection vulnerabilities.",
@@ -56,6 +59,14 @@ const accordionData = [
 	}
 ];
 
+const badgeVariantMapper = (badgeText) => {
+	if (badgeText.toLowerCase().includes("critical")) return "critical";
+	if (badgeText.toLowerCase().includes("high")) return "high";
+	if (badgeText.toLowerCase().includes("medium")) return "medium";
+	if (badgeText.toLowerCase().includes("low")) return "low";
+	return "noVulnerability";
+};
+
 const Report = () => {
 	const [openAccordions, setOpenAccordions] = useState([]);
 
@@ -76,7 +87,7 @@ const Report = () => {
 			</div>
 
 			<h1 className='text-5xl font-semibold py-4'>
-				Uh oh! This page has 2 vulnerabilities!
+				Uh oh! This page has 5 vulnerabilities!
 			</h1>
 
 			<SearchInput />
@@ -89,6 +100,7 @@ const Report = () => {
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-16 w-full px-6">
 				{accordionData.map((item) => {
 					const isOpen = openAccordions.includes(item.id);
+					const badgeVariant = badgeVariantMapper(item.badge);
 
 					return (
 						<div
@@ -101,9 +113,9 @@ const Report = () => {
 							<div className="flex w-full items-center justify-between">
 								
 								{/* Badge */}
-								<span className="text-xs font-medium capitalize text-red italic bg-red/15 py-1 px-2 rounded-lg">
+								<Badge variant={badgeVariant}>
 									{item.badge}
-								</span>
+								</Badge>
 
 								{/* Chevron */}
 								<div className="opacity-0 transition duration-300 group-hover:opacity-100">
