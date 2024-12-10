@@ -101,7 +101,7 @@ const Report = () => {
 							<div className="flex w-full items-center justify-between">
 								
 								{/* Badge */}
-								<span className="text-xs font-semibold uppercase text-red-400">
+								<span className="text-xs font-medium capitalize text-red italic bg-red/15 py-1 px-2 rounded-lg">
 									{item.badge}
 								</span>
 
