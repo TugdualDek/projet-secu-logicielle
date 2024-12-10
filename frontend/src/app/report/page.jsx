@@ -81,12 +81,12 @@ const Report = () => {
 
 			<SearchInput />
 
-			<p className='mt-4 italic text-sm text-[#83848E]'>
+			<p className='mt-4 italic text-sm text-foreground-secondary'>
 				Analyzed on <span className='font-semibold'>5 Dec, 2024</span>
 			</p>
 
 			{/* Accordion Grid */}
-			<div className="grid grid-cols-3 gap-2 mt-16 w-full px-6">
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-16 w-full px-6">
 				{accordionData.map((item) => {
 					const isOpen = openAccordions.includes(item.id);
 
@@ -94,7 +94,7 @@ const Report = () => {
 						<div
 							key={item.id}
 							className={`flex flex-col justify-between group border border-white/15 rounded-lg p-8 gap-8 relative transition-all duration-300 hover:bg-white/5 cursor-pointer 
-								${isOpen ? "col-span-3 bg-white/5" : "col-span-1"}
+								${isOpen ? "col-span-1 sm:col-span-2 lg:col-span-3 bg-white/5" : "col-span-1"}
 							`}
 							onClick={() => toggleAccordion(item.id)}
 						>
