@@ -7,7 +7,7 @@ import time
 class Module(BaseModule):
     def run(self, context):
         start_url = context.get('url', context.get('target'))
-        max_depth = context.get('max_depth', 2)
+        max_depth = context.get('max_depth', 20)
         delay = context.get('delay', 0.5)
         visited_urls = set()
         crawled_urls = []
