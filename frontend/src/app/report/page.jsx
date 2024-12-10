@@ -68,16 +68,16 @@ const Report = () => {
 			</p>
 
 			{/* Accordion Grid */}
-			<div className="grid grid-cols-3 gap-2 mt-16 w-full px-6">
+			<div className="grid grid-cols-2 gap-2 mt-16 w-full px-6">
 				{accordionData.map((item) => (
 				<div
 					key={item.id}
-					className={`flex flex-col group border border-white/15 rounded-lg p-8 gap-8 relative transition-all duration-300 hover:bg-white/5 cursor-pointer
+					className={`flex flex-col justify-between group border border-white/15 rounded-lg p-8 gap-8 relative transition-all duration-300 hover:bg-white/5 cursor-pointer
 						${openAccordion === item.id ? "col-span-2" : "col-span-1"} 
 					}`}
 					onClick={() => toggleAccordion(item.id)}
 				>
-					<div className="flex flex-row flex-1 items-center justify-between">
+					<div className="flex flex-row w-full items-center justify-between">
 						{/* Badge */}
 						<span className="text-xs font-semibold uppercase text-red-400">
 							{item.badge}
