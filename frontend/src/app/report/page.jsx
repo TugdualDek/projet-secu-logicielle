@@ -70,6 +70,10 @@ const badgeVariantMapper = (badgeText) => {
 const Report = () => {
 	const [openAccordions, setOpenAccordions] = useState([]);
 
+	const vulnerabilitiesCount = accordionData.filter(
+		(item) => !item.badge.toLowerCase().includes("no vulnerability")
+	).length;
+
 	const toggleAccordion = (id) => {
 		// Toggle the accordion's ID in the array
 		setOpenAccordions((prev) =>
@@ -86,8 +90,12 @@ const Report = () => {
 				<ShieldCheck size={36} className='text-green hidden'/>
 			</div>
 
-			<h1 className='text-5xl font-semibold py-4'>
-				Uh oh! This page has 5 vulnerabilities!
+			<h1 className="text-5xl font-semibold py-4">
+				{vulnerabilitiesCount === 0
+					? "Good news! This page has no vulnerabilities!"
+					: `Uh oh! This page has ${vulnerabilitiesCount} ${
+						vulnerabilitiesCount === 1 ? "vulnerability" : "vulnerabilities"
+					}!`}
 			</h1>
 
 			<SearchInput />
