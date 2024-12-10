@@ -25,5 +25,5 @@ steps:
 
   - module: results_saver
     params:
-      vulnerability_type: "xss"
-      vulnerability_name: "Cross-Site Scripting"
+      vulnerability_type: "injection"
+      vulnerability_name: "XSS Cross-Site Scripting"
