@@ -5,11 +5,7 @@ steps:
   - module: force_browsing
     params:
       url: "{{ target }}"
-      paths:
-        - "admin"
-        - "login"
-        - "feedback"
-        - "search"
+      paths_url: "https://raw.githubusercontent.com/six2dez/OneListForAll/refs/heads/main/dict/small_short.txt"
 
   - module: results_saver
     params:
