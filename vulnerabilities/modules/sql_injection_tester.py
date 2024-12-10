@@ -5,6 +5,7 @@ import re
 class Module:
     def run(self, context):
         injection_vectors = context.get('injection_vectors', [])
+        sql_payloads = context.get('sql_payloads', [])
         module_results = []
 
         error_signatures = [
@@ -16,12 +17,6 @@ class Module:
             'sql syntax',
             'odbc drivers error',
             'Warning: mysql'
-        ]
-
-        sql_payloads = [
-            "' OR '1'='1",
-            "'; DROP TABLE users; --",
-            "' OR sleep(5)#"
         ]
 
         for vector in injection_vectors:
