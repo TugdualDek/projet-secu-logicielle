@@ -75,7 +75,7 @@ const Report = () => {
 				<ShieldCheck size={36} className='text-green hidden'/>
 			</div>
 
-			<h1 className='text-5xl py-4'>
+			<h1 className='text-5xl font-semibold py-4'>
 				Uh oh! This page has 2 vulnerabilities!
 			</h1>
 
