@@ -123,29 +123,33 @@ function ScanReport() {
 	
 	if (!scanId) {
 		return (
-			<div className="text-center text-white">
+			<h1 className="text-white">
 				Aucun identifiant de scan fourni dans l&apos;URL.
-			</div>
+			</h1>
 		);
 	}
 	
 	if (loading) {
 		return (
-			<div className="text-center text-white">
+			<h1 className="text-white">
 				Chargement des détails du scan...
-			</div>
+			</h1>
 		);
 	}
 	
 	if (error) {
-		return <div className="text-center text-red-500">Erreur : {error}</div>;
+		return (
+			<h1 className="text-red">
+				Erreur : {error}
+			</h1>
+		);
 	}
 	
 	if (!scan || !report) {
 		return (
-			<div className="text-center text-white">
+			<h1 className="text-white">
 				Aucun détail disponible pour ce scan.
-			</div>
+			</h1>
 		);
 	}
 
@@ -257,10 +261,7 @@ function ScanReport() {
 
 export default function Scan() {
 	return (
-		<div className="space-y-8">
-			<h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
-				Détails du Scan
-			</h1>
+		<div className="w-full h-auto text-center text-4xl font-semibold flex flex-col items-center justify-center p-4">
 			<Suspense
 				fallback={<div className="text-center text-white">Chargement...</div>}
 			>
