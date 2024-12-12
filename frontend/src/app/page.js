@@ -1,8 +1,9 @@
 "use client";
 
+import { Shield } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Shield } from 'lucide-react';
+import Image from 'next/image';
 
 import GradientBackground from '@/components/gradient-background';
 import SearchInput from '@/components/search-input';
@@ -11,6 +12,39 @@ import SearchInput from '@/components/search-input';
 export default function Home() {
 	const [scrolling, setScrolling] = useState(false);
 	const router = useRouter();
+
+	const contributors = [
+		{
+			name: "Diane Dinh",
+			image: "",
+			github: "https://github.com/johndoe",
+		},
+		{
+			name: "Jane Smith",
+			image: "",
+			github: "https://github.com/janesmith",
+		},
+		{
+			name: "Alex Brown",
+			image: "",
+			github: "https://github.com/alexbrown",
+		},
+		{
+			name: "Jane Smith",
+			image: "",
+			github: "https://github.com/janesmith",
+		},
+		{
+			name: "Alex Brown",
+			image: "",
+			github: "https://github.com/alexbrown",
+		},
+		{
+			name: "Jane Smith",
+			image: "",
+			github: "https://github.com/janesmith",
+		}
+	];
 
 	const handleClick = () => {
 		// Prevent interactions and enable scrolling
@@ -49,7 +83,7 @@ export default function Home() {
 				scrolling ? 'pointer-events-none' : ''
 			}`}
 		>
-			<div className="absolute z-20 w-full h-full flex flex-1 flex-col items-center justify-between">
+			<div className="absolute z-20 w-full h-full flex flex-1 flex-col items-center justify-between p-4 text-balance">
 				
 				{/* Header component */}
 				<div className='h-14 w-full' />
@@ -58,8 +92,8 @@ export default function Home() {
 					<div className="h-16 w-16 flex items-center justify-center bg-white/15 backdrop-blur-md rounded-full border border-white/15 text-[#6E3CEC]">
 						<Shield size={36} />
 					</div>
-					<h1 className="text-5xl font-bold text-white">Discover how secure your website is</h1>
-					<p className="text-2xl font-medium text-neutral-500">
+					<h1 className="text-3xl md:text-5xl font-bold text-white text-center">Discover how secure your website is</h1>
+					<p className="text-base md:text-2xl font-medium text-neutral-500 text-center">
 						Test the vulnerabilities in matter of seconds,
 						<br />
 						avoid potential risks threats on your company.
@@ -68,9 +102,33 @@ export default function Home() {
 					<SearchInput onClick={handleClick} />
 				</div>
 				
-				<div className='pb-12'>Made with ❤️ by</div>
+				<div className='pb-12 flex flex-row items-center gap-2'>
+					<p>Made with ❤️ by </p>
+					<div className="flex items-center">
+						{contributors.map((contributor, index) => (
+							<a
+								key={index}
+								href={contributor.github}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="relative inline-block"
+								style={{ zIndex: contributors.length + index, marginLeft: index === 0 ? 0 : -12 }} // z-index and negative margin for overlap
+							>
+								<Image
+									src={contributor.image}
+									alt={contributor.name}
+									title={contributor.name}
+									width={128}
+									height={128}
+									className="h-8 w-8 rounded-full border border-white shadow-lg object-cover"
+								/>
+							</a>
+						))}
+					</div>
+				</div>
 			</div>
 			<GradientBackground />
 		</div>
 	);
 }
+
