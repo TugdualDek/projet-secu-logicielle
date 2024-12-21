@@ -7,6 +7,7 @@ import Image from 'next/image';
 
 import GradientBackground from '@/components/gradient-background';
 import SearchInput from '@/components/search-input';
+import Tooltip from "@/components/tooltip";
 
 
 export default function Home() {
@@ -16,32 +17,32 @@ export default function Home() {
 	const contributors = [
 		{
 			name: "Diane Dinh",
-			image: "",
+			image: "/image.png",
 			github: "https://github.com/johndoe",
 		},
 		{
 			name: "Jane Smith",
-			image: "",
+			image: "/image.png",
 			github: "https://github.com/janesmith",
 		},
 		{
 			name: "Alex Brown",
-			image: "",
+			image: "/image.png",
 			github: "https://github.com/alexbrown",
 		},
 		{
 			name: "Jane Smith",
-			image: "",
+			image: "/image.png",
 			github: "https://github.com/janesmith",
 		},
 		{
 			name: "Alex Brown",
-			image: "",
+			image: "/image.png",
 			github: "https://github.com/alexbrown",
 		},
 		{
 			name: "Jane Smith",
-			image: "",
+			image: "/image.png",
 			github: "https://github.com/janesmith",
 		}
 	];
@@ -106,23 +107,26 @@ export default function Home() {
 					<p>Made with ❤️ by </p>
 					<div className="flex items-center">
 						{contributors.map((contributor, index) => (
-							<a
-								key={index}
-								href={contributor.github}
-								target="_blank"
-								rel="noopener noreferrer"
-								className="relative inline-block"
-								style={{ zIndex: contributors.length + index, marginLeft: index === 0 ? 0 : -12 }} // z-index and negative margin for overlap
-							>
-								<Image
-									src={contributor.image}
-									alt={contributor.name}
-									title={contributor.name}
-									width={128}
-									height={128}
-									className="h-8 w-8 rounded-full border border-white shadow-lg object-cover"
-								/>
-							</a>
+							<Tooltip key={index} content={contributor.name}>
+								<a
+									href={contributor.github}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="relative inline-block"
+									style={{
+										zIndex: contributors.length - index,
+										marginLeft: index === 0 ? 0 : -12,
+									}}
+								>
+									<Image
+										src={contributor.image}
+										alt={contributor.name}
+										width={128}
+										height={128}
+										className="h-8 w-8 rounded-full border border-white shadow-lg object-cover"
+									/>
+								</a>
+							</Tooltip>
 						))}
 					</div>
 				</div>
