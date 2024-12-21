@@ -207,7 +207,8 @@ function ScanReport() {
 					}
 					
 					const isOpen = openAccordions.includes(index);
-					const badgeVariant = badgeVariantMapper(index);
+					const isVulnerable = findVulnerableField(descriptionData);
+					// const badgeVariant = badgeVariantMapper(index);
 
 					return (
 						<div
@@ -220,9 +221,16 @@ function ScanReport() {
 							<div className="flex w-full items-center justify-between">
 								
 								{/* Badge */}
-								<Badge variant={badgeVariant}>
+								{/* <Badge variant={badgeVariant}>
 									{item.badge}
-								</Badge>
+								</Badge> */}
+								
+								{isVulnerable === true && (
+									<Badge variant="critical">1 Critical</Badge>
+								)}
+								{isVulnerable === false && (
+									<Badge variant="noVulnerability">No vulnerability</Badge>
+								)}
 
 								{/* Chevron */}
 								<div className="opacity-0 transition duration-300 group-hover:opacity-100">
