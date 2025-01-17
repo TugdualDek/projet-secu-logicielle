@@ -1,6 +1,6 @@
 # vulnerabilities/modules/xxe_tester.py
 
-from base_module import BaseModule
+from vulnerabilities.modules.base_module import BaseModule
 import requests
 from bs4 import BeautifulSoup
 import logging

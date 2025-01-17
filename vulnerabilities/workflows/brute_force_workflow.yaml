@@ -1,5 +1,6 @@
 name: brute_force_with_discovery_workflow
 description: Test de vulnérabilité par force brute en découvrant automatiquement le formulaire de login
+
 steps:
   - module: endpoint_discoverer
     params:
@@ -9,11 +10,17 @@ steps:
 
   - module: endpoint_selector
 
-  - module: brute_force_tester
+  - module: brute_force_module
     params:
-      usernames: ["test@example.com", "tired@tired.com", "admin@test.com"]
-      passwords: ["passwo23", "123456789", "admin123"]
-      max_attempts: 20
+      # Ces usernames/passwords seront injectés dans le context pour la suite
+      usernames:
+        - "test@example.com"
+      passwords:
+        - "passwo23"
+
+      # Nombre max de tentatives
+      max_attempts: 4
+      # Délai de base entre les tentatives
       delay: 1
 
   - module: results_saver

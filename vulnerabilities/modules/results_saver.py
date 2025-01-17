@@ -1,4 +1,4 @@
-from base_module import BaseModule
+from vulnerabilities.modules.base_module import BaseModule
 import json
 
 class Module(BaseModule):
