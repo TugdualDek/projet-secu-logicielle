@@ -1,5 +1,5 @@
-from base_module import BaseModule
-import re
+from vulnerabilities.modules.base_module import BaseModule
+
 
 class Module(BaseModule):
     def run(self, context):

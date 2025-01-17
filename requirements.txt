@@ -22,3 +22,7 @@ typing_extensions==4.12.2
 urllib3==2.2.3
 waitress==3.0.1
 Werkzeug==3.1.2
+selenium==4.15.1
+webdriver_manager==3.5.2
+requests>=2.26.0
+beautifulsoup4>=4.9.3
