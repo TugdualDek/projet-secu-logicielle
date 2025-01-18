@@ -1,7 +1,8 @@
 import requests
 from urllib.parse import urljoin
+from base_module import BaseModule
 
-class Module:
+class Module(BaseModule):
     def run(self, context):
         target_url = context.get('url')
         paths_to_check = context.get('paths', [])

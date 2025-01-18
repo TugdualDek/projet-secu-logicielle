@@ -1,7 +1,8 @@
 from datetime import datetime
 import requests
+from base_module import BaseModule
 
-class SecurityLogger:
+class Module(BaseModule):
     def run(self, context):
         """
         Run security logging checks

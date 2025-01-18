@@ -1,7 +1,8 @@
+from base_module import BaseModule
 import requests
 from bs4 import BeautifulSoup
 
-class ComponentChecker:
+class Module(BaseModule):
     def run(self, context):
         """
         Run component version checks
