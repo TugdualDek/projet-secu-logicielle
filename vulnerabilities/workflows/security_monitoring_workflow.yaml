@@ -4,3 +4,7 @@ steps:
   - module: security_logger
     params:
       target: "{{ target }}"
+  - module: results_saver
+    params:
+      vulnerability_type: "security_monitoring"
+      vulnerability_name: "Security Monitoring"
