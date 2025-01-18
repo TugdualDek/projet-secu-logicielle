@@ -28,7 +28,7 @@ class CommonCredentialsStrategy:
     def generate(self, context):
         for u in self.usernames:
             for p in self.passwords:
-                yield (u, p)
+                yield u, p
 
 
 class ContextualCredentialsStrategy:
@@ -45,10 +45,10 @@ class ContextualCredentialsStrategy:
         year = datetime.datetime.now().year
 
         # Exemples de crédentiels contextuels
-        yield (f"admin@{domain}", "admin123")
-        yield (f"root@{domain}", f"{domain}{year}")
-        yield (f"support@{domain}", f"support{year}")
-        yield (f"user@{domain}", f"user{year}!")
+        yield f"admin@{domain}", "admin123"
+        yield f"root@{domain}", f"{domain}{year}"
+        yield f"support@{domain}", f"support{year}"
+        yield f"user@{domain}", f"user{year}!"
 
 
 class DictionaryCredentialsStrategy:
@@ -66,7 +66,7 @@ class DictionaryCredentialsStrategy:
                     if not line or ':' not in line:
                         continue  # Ignorer les lignes invalides
                     username, password = line.split(':', 1)
-                    yield (username.strip(), password.strip())
+                    yield username.strip(), password.strip()
         except FileNotFoundError:
             # Gérer le cas où le fichier n'existe pas
             pass
