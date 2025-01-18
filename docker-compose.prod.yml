@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:17
+    image: postgres:17-alpine
     restart: always
     environment:
       - POSTGRES_USER=postgres
@@ -21,7 +21,9 @@ services:
       - scanner_network
 
   scanner:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     command: ["waitress-serve", "--host=0.0.0.0", "--port=5000", "server:app"]
     #command: ["flask", "run", "--host=0.0.0.0", "--port=5000"]
     restart: always
@@ -38,12 +40,11 @@ services:
       - ./vulnerabilities:/app/vulnerabilities
     networks:
       - scanner_network
-      - default  # Permet l'accès au réseau par défaut de Docker
-    extra_hosts:
-      - "host.docker.internal:host-gateway"  # Permet l'accès à l'hôte
 
   worker:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     command: ["rq", "worker", "scan_tasks", "--with-scheduler"]
     depends_on:
       - db
@@ -54,9 +55,6 @@ services:
       - ./vulnerabilities:/app/vulnerabilities
     networks:
       - scanner_network
-      - default  # Permet l'accès au réseau par défaut de Docker
-    extra_hosts:
-      - "host.docker.internal:host-gateway"  # Permet l'accès à l'hôte
 
 networks:
   scanner_network:
