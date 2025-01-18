@@ -8,18 +8,22 @@ services:
       - POSTGRES_DB=vulnerability_scanner
     ports:
       - "5432:5432"
+    networks:
+      - scanner_network
 
   redis:
     image: redis:7.4-alpine
     restart: always
     ports:
-      - "63790:6379"
+      - "6379:6379"
     command: redis-server
+    networks:
+      - scanner_network
 
   scanner:
     build: .
-    #command: ["waitress-serve", "--host=0.0.0.0", "--port=5000", "server:app"]
-    command: ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+    command: ["waitress-serve", "--host=0.0.0.0", "--port=5000", "server:app"]
+    #command: ["flask", "run", "--host=0.0.0.0", "--port=5000"]
     restart: always
     ports:
       - "5000:5000"
@@ -30,6 +34,13 @@ services:
       - .env
     environment:
       - PYTHONPATH=/app
+    volumes:
+      - ./vulnerabilities:/app/vulnerabilities
+    networks:
+      - scanner_network
+      - default  # Permet l'accès au réseau par défaut de Docker
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Permet l'accès à l'hôte
 
   worker:
     build: .
@@ -39,3 +50,20 @@ services:
       - redis
     env_file:
       - .env
+    volumes:
+      - ./vulnerabilities:/app/vulnerabilities
+    networks:
+      - scanner_network
+      - default  # Permet l'accès au réseau par défaut de Docker
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Permet l'accès à l'hôte
+
+networks:
+  scanner_network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "0.0.0.0"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16

@@ -1,0 +1,13 @@
+name: force_browsing_workflow
+description: Detect force browsing
+
+steps:
+  - module: force_browsing
+    params:
+      url: "{{ target }}"
+      paths_url: "https://raw.githubusercontent.com/six2dez/OneListForAll/refs/heads/main/dict/small_short.txt"
+
+  - module: results_saver
+    params:
+      vulnerability_type: "force_browsing"
+      vulnerability_name: "Force Browsing"

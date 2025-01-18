@@ -1,0 +1,20 @@
+name: info_leak_workflow
+description: Détection des fuites potentielles d'informations sensibles
+steps:
+  - module: error_message
+    params:
+      url: "{{ target }}"
+
+  - module: extract_metadata
+    params:
+      url: "{{ target }}"
+
+  - module: vulnerability_directories
+    params:
+      base_url: "{{ target }}"
+      depth: 3
+
+  - module: results_saver
+    params:
+      vulnerability_type: "information_leakage"
+      vulnerability_name: "Potential information leaks"

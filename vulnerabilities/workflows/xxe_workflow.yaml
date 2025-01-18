@@ -1,0 +1,17 @@
+name: xxe_test_workflow
+description: Test des vulnérabilités XXE
+steps:
+  - module: endpoint_discoverer
+    params:
+      url: "{{ target }}"
+      max_depth: 3
+      delay: 1
+
+  - module: xxe_vector_builder
+
+  - module: xxe_tester
+
+  - module: results_saver
+    params:
+      vulnerability_type: "xxe"
+      vulnerability_name: "XML External Entity"

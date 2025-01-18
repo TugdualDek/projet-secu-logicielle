@@ -1,0 +1,29 @@
+name: xss_test_workflow
+description: Detect du XSS
+
+steps:
+  - module: endpoint_discoverer
+    params:
+      url: "{{ target }}"
+      max_depth: 5
+      delay: 1
+
+  - module: xss_vector_builder
+    params:
+      crawled_urls: "{{ crawled_urls }}"
+      discovered_forms: "{{ discovered_endpoints }}"
+      xss_payloads:
+        - "<script>alert('XSS')</script>"
+        - "\"><script>alert('XSS')</script>"
+        - "<img src=x onerror=alert('XSS')>"
+        - "<svg/onload=alert('XSS')>"
+        - "<body onload=alert('XSS')>"
+
+  - module: xss_module
+    params:
+      injection_vectors: "{{ injection_vectors }}"
+
+  - module: results_saver
+    params:
+      vulnerability_type: "injection"
+      vulnerability_name: "XSS Cross-Site Scripting"

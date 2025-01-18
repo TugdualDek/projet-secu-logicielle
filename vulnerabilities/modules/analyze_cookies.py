@@ -1,5 +1,5 @@
 from http.cookies import SimpleCookie
-from base_module import BaseModule
+from vulnerabilities.modules.base_module import BaseModule
 
 class Module(BaseModule):
     def run(self, context):
