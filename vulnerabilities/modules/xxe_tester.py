@@ -1,5 +1,3 @@
-# vulnerabilities/modules/xxe_tester.py
-
 from vulnerabilities.modules.base_module import BaseModule
 import requests
 from bs4 import BeautifulSoup
@@ -98,7 +96,7 @@ class Module(BaseModule):
                     post_response = session.post(
                         url,
                         data=post_data,
-                        headers={'Content-Type': 'application/x-www-form-urlencoded'},  # Correspond au type de formulaire
+                        headers={'Content-Type': 'application/x-www-form-urlencoded'},
                         timeout=10
                     )
 
