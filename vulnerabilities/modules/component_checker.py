@@ -1,8 +1,7 @@
-from backend.core.base_module import BaseModule
 import requests
 from bs4 import BeautifulSoup
 
-class ComponentChecker(BaseModule):
+class ComponentChecker:
     def run(self, context):
         """
         Run component version checks
@@ -77,11 +76,11 @@ class ComponentChecker(BaseModule):
             
         # Check common framework signatures
         if soup.select('[ng-app]'):
-            frameworks['Angular'] = self._detect_angular_version(soup)
+            frameworks['Angular'] = 'Version Unknown'
         if soup.select('[data-reactroot]'):
-            frameworks['React'] = 'Unknown Version'
+            frameworks['React'] = 'Version Unknown'
         if soup.select('[data-vue]'):
-            frameworks['Vue.js'] = self._detect_vue_version(soup)
+            frameworks['Vue.js'] = 'Version Unknown'
             
         return frameworks
 

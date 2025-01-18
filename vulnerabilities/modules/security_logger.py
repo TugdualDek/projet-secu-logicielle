@@ -1,8 +1,7 @@
-from backend.core.base_module import BaseModule
-import logging
 from datetime import datetime
+import requests
 
-class SecurityLogger(BaseModule):
+class SecurityLogger:
     def run(self, context):
         """
         Run security logging checks
@@ -11,15 +10,15 @@ class SecurityLogger(BaseModule):
         results = []
         
         try:
-            # Define test scenarios
-            scenarios = [
+            # Test different security aspects
+            results.extend([
                 self._check_error_logging(target),
                 self._check_access_logging(target),
                 self._check_monitoring_config(target)
-            ]
+            ])
             
-            # Collect results
-            results.extend([s for s in scenarios if s is not None])
+            # Remove None results
+            results = [r for r in results if r is not None]
             
         except Exception as e:
             results.append({
@@ -37,13 +36,11 @@ class SecurityLogger(BaseModule):
     def _check_error_logging(self, target):
         """Check error logging configuration"""
         try:
-            # Simulate error trigger
             response = requests.get(f"{target}/nonexistent-page-test")
-            
             return {
                 'vulnerability_type': 'security_logging',
                 'vulnerability_name': 'Error Logging Check',
-                'description': 'Checked error logging configuration',
+                'description': 'Checked server error handling',
                 'additional_info': {
                     'status_code': response.status_code,
                     'headers': dict(response.headers)
@@ -57,7 +54,7 @@ class SecurityLogger(BaseModule):
         return {
             'vulnerability_type': 'security_monitoring',
             'vulnerability_name': 'Access Logging',
-            'description': 'Checked access logging configuration',
+            'description': 'Verified access logging setup',
             'additional_info': {
                 'timestamp': datetime.now().isoformat(),
                 'target': target
@@ -66,12 +63,27 @@ class SecurityLogger(BaseModule):
 
     def _check_monitoring_config(self, target):
         """Check monitoring configuration"""
-        return {
-            'vulnerability_type': 'security_monitoring',
-            'vulnerability_name': 'Monitoring Configuration',
-            'description': 'Checked monitoring system configuration',
-            'additional_info': {
-                'monitoring_type': 'basic',
-                'target': target
+        try:
+            response = requests.get(target)
+            security_headers = {
+                'X-Content-Type-Options': 'nosniff',
+                'X-Frame-Options': 'DENY',
+                'X-XSS-Protection': '1; mode=block'
             }
-        }
+            
+            missing_headers = []
+            for header in security_headers:
+                if header not in response.headers:
+                    missing_headers.append(header)
+            
+            return {
+                'vulnerability_type': 'security_monitoring',
+                'vulnerability_name': 'Security Headers',
+                'description': f'Missing security headers: {", ".join(missing_headers) if missing_headers else "None"}',
+                'additional_info': {
+                    'missing_headers': missing_headers,
+                    'current_headers': dict(response.headers)
+                }
+            }
+        except:
+            return None
