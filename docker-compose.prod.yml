@@ -60,4 +60,10 @@ services:
 
 networks:
   scanner_network:
-    external: true  # Utilise le réseau existant
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "0.0.0.0"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
