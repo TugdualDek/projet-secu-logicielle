@@ -4,3 +4,7 @@ steps:
   - module: component_checker
     params:
       target: "{{ target }}"
+  - module: results_saver
+    params:
+      vulnerability_type: "component_version"
+      vulnerability_name: "Component Version Vulnerability"
