@@ -1,0 +1,14 @@
+name: least_privilege_violation_workflow
+description: Least privilege violation checking
+steps:
+  - module: user_login
+    params:
+      username: "user_limited"
+      password: "password_limited"
+  - module: access_sensitive_resource
+    params:
+      expected_result: "denied"
+  - module: report_violation_least_priv
+    params:
+      violation_type: "least_privilege"
+      username: "user_limited"
