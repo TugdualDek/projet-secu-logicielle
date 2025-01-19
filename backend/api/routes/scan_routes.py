@@ -10,7 +10,7 @@ from redis import Redis
 
 # Créez une connexion Redis et initialisez la queue
 redis_conn = Redis(host=REDIS_CONFIG['HOST'], port=REDIS_CONFIG['PORT'])
-q = Queue('scan_tasks', connection=redis_conn)
+q = Queue('scan_tasks', connection=redis_conn, default_timeout=3600)
 
 scans_bp = Blueprint('scans', __name__)
 

@@ -1,0 +1,11 @@
+name: ssl_security_workflow
+description: Analyse de la sécurité SSL/TLS d'un site web
+steps:
+  - module: ssl_certificate_analyzer
+    params:
+      target: "{{ target }}"
+
+  - module: results_saver
+    params:
+      vulnerability_type: "ssl_security"
+      vulnerability_name: "SSL/TLS Security Analysis"

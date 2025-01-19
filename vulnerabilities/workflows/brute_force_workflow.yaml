@@ -15,9 +15,16 @@ steps:
       # Ces usernames/passwords seront injectés dans le context pour la suite
       usernames:
         - "test@example.com"
+        - "admin"
+        - "root"
+        - "admin@admin.com"
+        - "jeanfelicien"
       passwords:
         - "passwo23"
-
+        - "password"
+        - "JeanFelicien2025"
+        - "admin"
+        - "root"
       # Nombre max de tentatives
       max_attempts: 4
       # Délai de base entre les tentatives

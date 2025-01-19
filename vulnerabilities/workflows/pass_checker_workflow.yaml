@@ -1,0 +1,13 @@
+name: password_workflow
+description: Vérification des exigences de sécurité des mots de passe sur les formulaires d'inscription
+steps:
+  - module: password_form_checker
+    params:
+      test_password: "test123"
+      strong_password: "StrongP@ssw0rd123!"
+      url: "{{ target }}"
+
+  - module: results_saver
+    params:
+      vulnerability_type: "password_form_security"
+      vulnerability_name: "Password Form Security Requirements"

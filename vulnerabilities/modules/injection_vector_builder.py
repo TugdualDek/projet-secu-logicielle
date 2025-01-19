@@ -1,6 +1,7 @@
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+from base_module import BaseModule
 
-class Module:
+class Module(BaseModule):
     def run(self, context):
         urls = context.get('crawled_urls', [])
         forms = context.get('discovered_forms', [])

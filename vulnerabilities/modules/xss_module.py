@@ -1,6 +1,7 @@
 import requests
+from base_module import BaseModule
 
-class Module:
+class Module(BaseModule):
     def run(self, context):
         injection_vectors = context.get('injection_vectors', [])
         module_results = []
@@ -16,7 +17,13 @@ class Module:
             context['module_results'] = [{'message': "Aucun vecteur d'injection fourni", 'vulnerable': False}]
             return context
         
+        # Flag pour arrêter la recherche dès qu'une vulnérabilité est trouvée
+        found_vulnerability = False
+
         for vector in injection_vectors:
+            if found_vulnerability:  # Si une vulnérabilité est déjà trouvée, on arrête les tests
+                break
+
             url = vector.get('url')
             method = vector.get('method', 'get').lower()
             params = vector.get('params', {}) or {}
@@ -45,6 +52,9 @@ class Module:
                             'vulnerable': True
                         }
                         module_results.append(result)
+                        found_vulnerability = True  # Marque qu'une vulnérabilité a été trouvée
+                        break  # Arrêter de tester les autres payloads pour ce vecteur
+
                 except requests.RequestException as e:
                     module_results.append({'url': url, 'error': str(e), 'vulnerable': False})
 
