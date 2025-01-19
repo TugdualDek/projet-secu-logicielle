@@ -1,13 +1,4 @@
 from base_module import BaseModule
-<<<<<<< HEAD
-
-class Module(BaseModule):
-  def report_violation(violation_type, vulnerable_url, details=""):
-    print(f"Vulnérabilité CSRF détectée !")
-    print(f"  URL vulnérable: {vulnerable_url}")
-    if details:
-      print(f"  Détails: {details}")
-=======
 import json
 
 class Module(BaseModule):
@@ -60,4 +51,3 @@ class Module(BaseModule):
     except Exception as e:
         context.setdefault('errors', []).append(f"Erreur dans report_violation_csrf : {e}")
         return context
->>>>>>> refs/remotes/origin/bruce

