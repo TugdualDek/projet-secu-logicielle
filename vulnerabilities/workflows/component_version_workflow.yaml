@@ -1,6 +1,0 @@
-name: component_version_check
-description: Check for vulnerable and outdated components
-steps:
-  - module: component_checker
-    params:
-      target: "{{ target }}"
